@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 
-const OpportunityDetails = (props) => {
+const UpdateAsset = (props) => {
   const [StateData, setStateData] = useState([
     "AK - Alaska",
     "AL - Alabama",
@@ -93,38 +93,57 @@ const OpportunityDetails = (props) => {
           <TextField
             id="outlined-password-input"
             label="Bank"
-            disabled
             InputLabelProps={{
               shrink: true,
             }}
             value={props.d ? props.d.bank : ""}
+            onChange={(e) => props.ud({ ...props.d, bank: e.target.value })}
+            // value={props.d?props.d.bank:''}
           />
           <TextField
             id="outlined-password-input"
             label="Bank Account Number"
-            disabled
             InputLabelProps={{
               shrink: true,
             }}
             value={props.d ? props.d.bank_account_number : ""}
+            onChange={(e) =>
+              props.ud({
+                ...props.d,
+                bank_account_number: e.target.value,
+              })
+            }
+            // value={props.d?props.d.bank_account_number:''}
           />
           <TextField
             id="outlined-password-input"
             label="Bank Account Type"
-            disabled
             InputLabelProps={{
               shrink: true,
             }}
             value={props.d ? props.d.bank_account_type : ""}
+            onChange={(e) =>
+              props.ud({
+                ...props.d,
+                bank_account_type: e.target.value,
+              })
+            }
+            // value={props.d?props.d.bank_account_type:''}
           />
           <TextField
             id="outlined-password-input"
             label="Bank Account Balance"
-            disabled
             InputLabelProps={{
               shrink: true,
             }}
             value={props.d ? props.d.bank_account_balance : ""}
+            onChange={(e) =>
+              props.ud({
+                ...props.d,
+                bank_account_balance: e.target.value,
+              })
+            }
+            // value={props.d?props.d.bank_account_balance:''}
           />
         </Box>
       </div>
@@ -132,4 +151,4 @@ const OpportunityDetails = (props) => {
   );
 };
 
-export default OpportunityDetails;
+export default UpdateAsset;

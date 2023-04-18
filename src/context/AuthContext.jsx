@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
@@ -10,52 +10,41 @@ const AuthProvider = ({ children }) => {
     token: null,
     isLogin: false,
   });
+  const [socket, setSocket] = useState();
   const [userData, setUserData] = useState();
   const Navigate = useNavigate();
 
   useEffect(() => {
-    if (session.token !== null) {
-      localStorage.setItem("token", session.token);
-    }
-  }, [session]);
-
-  useEffect(() => {
-    session.isLogin
-      ? axios
-          .get(
-            `${import.meta.env.VITE_REACT_APP_SERVER_URL}/user_management/me`,
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            }
-          )
-          .then((res) => {
-            console.log(res.data);
-            setUserData(res.data.userDetail);
-          })
-          .catch((err) => {
+    axios
+      .get(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/user_management/me`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        setUserData(res.data.userDetail);
+      })
+      .catch((err) => {
+        console.log(err.response);
+        if (localStorage.getItem("token")) {
+          if (err.response.data.message === "jwt expired") {
             Navigate("/signin/unauthorized");
-            toast.error(
+            toast.success(
               "Session Expired Please Join Again Through Refferal Link"
             );
-            console.log(err);
-          })
-      : null;
-  }, [session]);
-
-  useEffect(() => {
-    let token = localStorage.getItem("token");
-    if (token) {
-      setSession({
-        token: token,
-        isLogin: true,
+            localStorage.removeItem("token");
+          }
+        } else {
+          null;
+        }
       });
-    }
-  }, []);
+  }, [localStorage.getItem("token")]);
 
   return (
-    <AuthContext.Provider value={{ session, setSession, userData }}>
+    <AuthContext.Provider
+      value={{ session, setSession, userData, socket, setSocket }}
+    >
       {children}
     </AuthContext.Provider>
   );

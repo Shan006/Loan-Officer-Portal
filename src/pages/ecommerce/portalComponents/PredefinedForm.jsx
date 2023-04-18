@@ -1,6 +1,6 @@
 const PredefinedForm = [
   {
-    title: "DEDAULT NEED LIST",
+    title: "DEFAULT NEED LIST",
     data: [
       {
         data: "Copies of Government Issued Identification",

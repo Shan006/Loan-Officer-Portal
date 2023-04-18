@@ -1,6 +1,34 @@
-import React from 'react';
+import React, { useEffect, useState, useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 
-function MessagesFooter() {
+function MessagesFooter({ setMessageList, msgId, socket, messageList }) {
+  const [currentMessage, setCurrentMessage] = useState("");
+  const { userData } = useContext(AuthContext);
+
+  const SendMessage = async () => {
+    // console.log("Hello");
+    if (currentMessage !== "") {
+      const messageData = {
+        senderId: userData._id,
+        recieverId: msgId,
+        text: currentMessage,
+        timestamp: new Date(Date.now()).toISOString(),
+      };
+      // console.log(messageData);
+
+      await socket.emit("sendMessage", messageData);
+      setMessageList((list) => [...list, messageData]);
+      setCurrentMessage("");
+    }
+  };
+
+  useEffect(() => {
+    socket.on("getMessage", (data) => {
+      setMessageList((list) => [...list, data]);
+    });
+    console.log("Recieving", messageList);
+  }, [socket]);
+
   return (
     <div className="sticky bottom-0">
       <div className="flex items-center justify-between bg-white border-t border-slate-200 px-4 sm:px-6 md:px-5 h-16">
@@ -12,13 +40,30 @@ function MessagesFooter() {
           </svg>
         </button>
         {/* Message input */}
-        <form className="grow flex">
-          <div className="grow mr-3">
-            <label htmlFor="message-input" className="sr-only">Type a message</label>
-            <input id="message-input" className="form-input w-full bg-slate-100 border-transparent focus:bg-white focus:border-slate-300" type="text" placeholder="Aa" />
-          </div>
-          <button type="submit" className="btn bg-indigo-500 hover:bg-indigo-600 text-white whitespace-nowrap">Send -&gt;</button>
-        </form>
+        {/* <form className="grow flex"> */}
+        <div className="grow mr-3">
+          <label htmlFor="message-input" className="sr-only">
+            Type a message
+          </label>
+          <input
+            id="message-input"
+            className="form-input w-full bg-slate-100 border-transparent focus:bg-white focus:border-slate-300"
+            type="text"
+            placeholder="Aa"
+            value={currentMessage}
+            onChange={(event) => {
+              setCurrentMessage(event.target.value);
+            }}
+          />
+        </div>
+        <button
+          // type="submit"
+          className="btn bg-indigo-500 hover:bg-indigo-600 text-white whitespace-nowrap"
+          onClick={SendMessage}
+        >
+          Send -&gt;
+        </button>
+        {/* </form> */}
       </div>
     </div>
   );

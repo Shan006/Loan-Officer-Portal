@@ -12,7 +12,7 @@ function DropdownProfile({ align }) {
 
   const trigger = useRef(null);
   const dropdown = useRef(null);
-  const { session, setSession, userData } = useContext(AuthContext);
+  const { userData } = useContext(AuthContext);
   const Navigate = useNavigate();
 
   // close on click outside
@@ -43,7 +43,6 @@ function DropdownProfile({ align }) {
 
   const SignOut = (e) => {
     e.preventDefault();
-    console.log("token", session.token);
     try {
       axios
         .get(
@@ -56,12 +55,11 @@ function DropdownProfile({ align }) {
         )
         .then((res) => {
           console.log(res.data);
-          setSession({
-            token: "",
-            isLogin: false,
-          });
-          // toast.success("LoggedOut Successfully");
+          localStorage.removeItem("token");
           Navigate("/signin/unauthorized");
+          toast.success(
+            "Session Expired Please Join Again Through Refferal Link"
+          );
         })
         .catch((err) => {
           console.log(err);
@@ -131,7 +129,7 @@ function DropdownProfile({ align }) {
             <li>
               <Link
                 className="font-medium text-sm text-indigo-500 hover:text-indigo-600 flex items-center py-1 px-3"
-                to="/settings"
+                to="/settings/account"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
               >
                 Settings

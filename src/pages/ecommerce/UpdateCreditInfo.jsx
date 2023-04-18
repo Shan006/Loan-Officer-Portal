@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 
-const RefinanceDetails = (props) => {
+const UpdateCreditInfo = (props) => {
   return (
     <>
       <div className="border-solid border-2 rounded-md border-indigo-200 py-3 mt-4">
@@ -20,47 +20,60 @@ const RefinanceDetails = (props) => {
           <TextField
             id="outlined-password-input"
             label="Borrwer DOB"
-            disabled
             InputLabelProps={{
               shrink: true,
             }}
             value={props.d ? props.d.borrower_dob : ""}
+            onChange={(e) =>
+              props.ud({ ...props.d, borrower_dob: e.target.value })
+            }
+            // value={props.d ? props.d.borrower_dob : ""}
           />
           <TextField
             id="outlined-password-input"
             label="Borrower SSN"
-            disabled
             InputLabelProps={{
               shrink: true,
             }}
             value={props.d ? props.d.borrower_ssn : ""}
+            onChange={(e) =>
+              props.ud({ ...props.d, borrower_ssn: e.target.value })
+            }
+            // value={props.d ? props.d.borrower_ssn : ""}
           />
           <TextField
             id="outlined-password-input"
             label="Co Borrower DOB"
-            disabled
             InputLabelProps={{
               shrink: true,
             }}
             value={props.d ? props.d.co_borrower_dob : ""}
+            onChange={(e) =>
+              props.ud({ ...props.d, co_borrower_dob: e.target.value })
+            }
+            // value={props.d ? props.d.co_borrower_dob : ""}
           />
           <TextField
             id="outlined-password-input"
             label="Co Borrower SSN"
-            disabled
             InputLabelProps={{
               shrink: true,
             }}
             value={props.d ? props.d.co_borrower_ssn : ""}
+            onChange={(e) =>
+              props.ud({ ...props.d, co_borrower_ssn: e.target.value })
+            }
+            // value={props.d ? props.d.co_borrower_ssn : ""}
           />
           <TextField
             id="outlined-password-input"
             label="Agreed?"
-            disabled
             InputLabelProps={{
               shrink: true,
             }}
             value={props.d ? props.d.agreed : ""}
+            onChange={(e) => props.ud({ ...props.d, agreed: e.target.value })}
+            // value={props.d ? props.d.agreed : ""}
           />
         </Box>
       </div>
@@ -68,4 +81,4 @@ const RefinanceDetails = (props) => {
   );
 };
 
-export default RefinanceDetails;
+export default UpdateCreditInfo;

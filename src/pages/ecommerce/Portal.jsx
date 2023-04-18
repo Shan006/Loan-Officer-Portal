@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
@@ -6,7 +6,7 @@ import Sidebar from "../../partials/Sidebar";
 import Header from "../../partials/Header";
 import { BsTelephone } from "react-icons/bs";
 import { FormControlLabel } from "@mui/material";
-import { Box } from "@mui/system";
+// import { Box } from "@mui/system";
 import TextField from "@mui/material/TextField";
 import { CheckBox } from "@mui/icons-material";
 import { IoIosArrowDown } from "react-icons/io";
@@ -19,14 +19,30 @@ import { TailSpin } from "react-loader-spinner";
 
 import PredefinedForm from "./portalComponents/PredefinedForm";
 import { PortalMilestoneForm } from "./portalComponents/PortalMilestoneForm";
-import {
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
-} from "@windmill/react-ui";
+import Box from "@mui/material/Box";
+import Modal from "@mui/material/Modal";
+import Button from "@mui/material/Button";
+// import {
+//   Modal,
+//   ModalHeader,
+//   ModalBody,
+//   ModalFooter,
+//   Button,
+// } from "@windmill/react-ui";
 import { AuthContext } from "../../context/AuthContext";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  boxShadow: 20,
+  pt: 3,
+  px: 21,
+  pb: 3,
+};
 
 const Portal = () => {
   // states
@@ -41,37 +57,86 @@ const Portal = () => {
   const [subArray, setSubArray] = useState([]);
   const [arr, setarr] = useState(PredefinedForm);
   const [selected, setSelected] = useState("DEDAULT NEED LIST");
+  // const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [openMsgModal, setOpenMsgModal] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sendingRefLinkDate, setsendingRefLinkDate] = useState("");
   const { openTaskModal, closeTaskModal } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [docs, setDocs] = useState([]);
   const Location = useLocation();
-  // const { backendUri } = useContext(AuthContext);
+  const myRef = useRef(false);
+  const [open, setOpen] = useState(false);
+  const [emailOpen, setEmailOpen] = useState(false);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleEmailOpen = () => {
+    setEmailOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleEmailClose = () => {
+    setEmailOpen(false);
+  };
 
   const [emailForm, setEmailForm] = useState({
-    // to: {Location.state.email},
     to: "",
     subject: "",
     message: "",
   });
-  // email form handler
+  const [msgForm, setMsgForm] = useState({
+    to: "",
+    message: "",
+  });
   const EmailFormHandler = (e) => {
     setEmailForm({
       ...emailForm,
       [e.target.name]: e.target.value,
     });
   };
-  // open and close modal functions
+  const MessageFormHandler = (e) => {
+    setMsgForm({
+      ...msgForm,
+      [e.target.name]: e.target.value,
+    });
+  };
   function openModal() {
     setIsModalOpen(true);
   }
   function closeModal() {
     setIsModalOpen(false);
-    setEmailForm("");
   }
 
-  // send mail button function
+  const SendMsg = async () => {
+    if (msgForm.to == "" && msgForm.message == "") {
+      toast.warn("Please fill all the feilds!!!");
+    } else {
+      try {
+        setLoading(true);
+        const respo = await axios.post(
+          `${import.meta.env.VITE_REACT_APP_SERVER_URL}/conversation/twilioSMS`,
+          {
+            to: Location.state.phone,
+            message: msgForm.message,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        setLoading(false);
+        setMsgForm("");
+        setOpen(false);
+        console.log("MSG response:", respo);
+        toast.success(respo.data.message);
+      } catch (error) {
+        console.log("Error while sending email ", error);
+      }
+    }
+  };
 
   const SendMail = async () => {
     if (
@@ -96,7 +161,7 @@ const Portal = () => {
             },
           }
         );
-        setIsModalOpen(false);
+        setEmailOpen(false);
         setLoading(false);
         setEmailForm("");
         console.log("Email response:", respo);
@@ -108,12 +173,17 @@ const Portal = () => {
   };
   // send lead refral link via Email
   const SendLeadLinkViaEmail = async () => {
+    let newData = arr.filter((item) => item.title === selected);
+    let updatedData = newData[0].data.filter((item) => item.status === true);
+    updatedData.map((item) => {
+      docs.push(item.data);
+    });
+    console.log(docs);
     if (docs.length < 0) {
       toast.warn("Please add documents!!!");
     } else {
       try {
         setLoading(true);
-        console.log(Location.state.leadId);
         const result = await axios.post(
           `${import.meta.env.VITE_REACT_APP_SERVER_URL}/lead/referral`,
           {
@@ -141,44 +211,19 @@ const Portal = () => {
       }
     }
   };
-  console.log();
-  // useEffect
-  useEffect(() => {
-    arr.map((item) => {
-      array.push(item.title);
-    });
-    console.log("array:", array);
-    console.log("lenght of array:", array.length);
-  }, []);
-  useEffect(() => {
-    arr.map((item) => {
-      if (item.title === selected) {
-        setSubArray(item.data);
-      }
-    });
-  }, [selected]);
-  // console.log("item selected:", selected);
-  // console.table("sub array data :", subArray);
+
   const SelectionOp = (op) => {
     setSelected(op);
-    setDocs([]);
-    console.log("subarray", subArray);
-    const arrD = subArray;
-    const Trues = arrD.filter((item) => item.status === true);
-    setDocs(Trues);
-    console.log("True", Trues);
-    // subArray.map((item) => {
-    //   return item.status ? setDocs([...docs, item.data]) : "";
-    // });
-    // for (var i = 0; i < subArray.length; i++) {
-    //   console.log("Statusssss", subArray[i].status);
-    //   if (subArray[i].status === true) {
-    // setDocs([...docs,subArray[i].data]);
-    // console.log("SubArrayNAmes",subArray[i].data);
-    // docs.push(subArray[i].data);
-    //   }
-    // }
-    // console.log("Docsss:", docs);
+    let SingleData = arr.filter((item) => item.title === op);
+    SingleData[0].data.map((itemData) => {
+      subArray.push(itemData);
+    });
+    if (subArray.length > 46) {
+      while (subArray.length !== 46) {
+        subArray.shift();
+      }
+    }
+    console.log(subArray);
   };
   return (
     <>
@@ -198,21 +243,31 @@ const Portal = () => {
               <div className="w-full  flex  lg:flex-row md:flex-col    justify-between   h-full">
                 <div className="flex  w-3/4 justify-evenly items-center ">
                   {/* <div className='h-full flex items-center ' >Lorenza Valencia</div> */}
-                  <div className="h-[40px] w-[40px] rounded-md hover:bg-[#058cc1] bg-[#1d4189] items-center flex justify-center cursor-pointer">
+                  {/* <div className="h-[40px] w-[40px] rounded-md hover:bg-[#058cc1] bg-[#1d4189] items-center flex justify-center cursor-pointer">
                     <BsTelephone className="h-6 w-6 text-white hover:scale-95 " />
-                  </div>
-                  <div
+                  </div> */}
+                  {/* <div
                     className="h-[40px] w-[40px] rounded-md hover:bg-[#058cc1] bg-[#1d4189] items-center flex justify-center cursor-pointer"
                     onClick={openModal}
                   >
-                    <AiOutlineMail className="h-6 w-6 text-white hover:scale-95" />
+                    <AiOutlineMail
+                      className="h-6 w-6 text-white hover:scale-95"
+                      onClick={handleEmailOpen}
+                    />
                   </div>
-
-                  {/* modal */}
-
-                  <Modal isOpen={isModalOpen} onClose={closeModal}>
-                    <ModalHeader>New Email</ModalHeader>
-                    <ModalBody>
+                  <Modal
+                    open={emailOpen}
+                    onClose={handleEmailClose}
+                    aria-labelledby="parent-modal-title"
+                    aria-describedby="parent-modal-description"
+                  >
+                    <Box sx={{ ...style, width: 600 }}>
+                      <h2
+                        id="parent-modal-title"
+                        className="text-xl text-center"
+                      >
+                        <b>EMAIL</b>
+                      </h2>
                       <div className="flex flex-col ">
                         <div className="flex flex-col w-full ">
                           <p className="">To</p>
@@ -220,7 +275,6 @@ const Portal = () => {
                             type="email"
                             name="to"
                             value={Location.state.email}
-                            // value={emailForm.to}
                             onChange={EmailFormHandler}
                             className=""
                           />
@@ -246,36 +300,66 @@ const Portal = () => {
                             onChange={EmailFormHandler}
                             className=""
                           />
+                          <button
+                            className="mt-5 bg-slate-900 text-white py-2 px-4 text-lg"
+                            onClick={SendMail}
+                          >
+                            Send
+                          </button>
                         </div>
                       </div>
-                    </ModalBody>
-                    <ModalFooter>
-                      <Button
-                        className="w-full sm:w-auto bg-[#1d4189] items-center text-white"
-                        layout="outline"
-                        onClick={SendMail}
-                      >
-                        Send
-                      </Button>
-                      <Button
-                        className="w-full sm:w-auto"
-                        layout="outline"
-                        onClick={closeModal}
-                      >
-                        Cancel
-                      </Button>
-                    </ModalFooter>
+                    </Box>
                   </Modal>
-
-                  <div className="h-[40px] w-[40px] rounded-md hover:bg-[#058cc1] bg-[#1d4189] items-center flex justify-center cursor-pointer">
+                  <div
+                    className="h-[40px] w-[40px] rounded-md hover:bg-[#058cc1] bg-[#1d4189] items-center flex justify-center cursor-pointer"
+                    onClick={handleOpen}
+                  >
                     <BiMessageDots className="h-6 w-6 text-white hover:scale-95" />
                   </div>
-                  <div
+                  <div>
+                    <Modal
+                      open={open}
+                      onClose={handleClose}
+                      aria-labelledby="parent-modal-title"
+                      aria-describedby="parent-modal-description"
+                    >
+                      <Box sx={{ ...style, width: 600 }}>
+                        <h2
+                          id="parent-modal-title"
+                          className="text-xl text-center"
+                        >
+                          <b>SMS</b>
+                        </h2>
+                        <h2 className="text-lg">To</h2>
+                        <input
+                          type="text"
+                          name="to"
+                          value={Location.state.phone}
+                          onChange={MessageFormHandler}
+                        />
+                        <h2 className="text-lg">Message</h2>
+
+                        <input
+                          type="text"
+                          name="message"
+                          onChange={MessageFormHandler}
+                        />
+
+                        <button
+                          className="mt-5 bg-slate-900 text-white py-2 px-4 text-lg"
+                          onClick={SendMsg}
+                        >
+                          Send
+                        </button>
+                      </Box>
+                    </Modal>
+                  </div> */}
+                  {/* <div
                     className="h-[40px] w-[40px] rounded-md hover:bg-[#058cc1] bg-[#1d4189] items-center flex justify-center cursor-pointer"
                     onClick={openTaskModal}
                   >
                     <VscTasklist className="h-6 w-6 text-white hover:scale-95" />
-                  </div>
+                  </div> */}
                 </div>
                 <div className="flex   justify-evenly items-center ">
                   <div className="h-full flex items-center text-black text-lg font-bold lg:mr-4 xl:mr-4 md:mr-4">
@@ -379,12 +463,12 @@ const Portal = () => {
                       className="w-full"
                       onChange={(e) => SelectionOp(e.target.value)}
                     >
-                      {array.map((item, index) => (
+                      {arr.map((item, index) => (
                         <option
-                          value={`${item}`}
+                          value={`${item.title}`}
                           className="cursor-pointer text-[#0F91c5] pt-2  hover:hover:text-[#c07229]"
                         >
-                          {item}
+                          {item.title}
                         </option>
                       ))}
                     </select>
@@ -496,7 +580,7 @@ const Portal = () => {
                 </button>
               </div>
             </div>
-            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 pb-4 px-2">
+            {/* <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 pb-4 px-2">
               <div className="flex items-center cursor-pointer">
                 <input type="checkbox" className="inline-flex mr-2" />
                 <p className="text-xs">
@@ -506,9 +590,9 @@ const Portal = () => {
               </div>
               <div className="cursor-pointer">Download zip</div>
               <div className="cursor-pointer">Convert to PDF</div>
-            </div>
+            </div> */}
             {/* Send pre Approvel Letter */}
-            <div className="w-[300px] mx-2 pb-2  ">
+            {/* <div className="w-[300px] mx-2 pb-2  ">
               <div className=" flex  justify-center rounded-md p-2 hover:bg-[#058cc1] bg-[#1d4189] hover:scale-95">
                 <button
                   className="text-lg font-medium text-white  "
@@ -517,7 +601,7 @@ const Portal = () => {
                   Send Pre_Approvel Letter
                 </button>
               </div>
-            </div>
+            </div> */}
             {addCutomDoc ? (
               <>
                 <div className="lg:flex-row md:flex-row xl:flex sm:flex flex-col  justify-center mx-2 pb-4 ">
@@ -556,7 +640,7 @@ const Portal = () => {
               ""
             )}
             {/* Trash document table*/}
-            <div className="flex flex-col pb-6">
+            {/* <div className="flex flex-col pb-6">
               <p className=" flex text-lg font-semibold px-2">
                 Trash Documents
               </p>
@@ -607,7 +691,7 @@ const Portal = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Portal Milestones*/}
             <div className="flex flex-col pb-6">
@@ -664,7 +748,7 @@ const Portal = () => {
             </div>
             {/* bellow work */}
 
-            <div className="mt-3 flex-col w-[100%] bg-white p-2">
+            {/* <div className="mt-3 flex-col w-[100%] bg-white p-2">
               <div className="flex w-[100%] justify-between">
                 <h1 className="text-lg">Custom Questions & Fields</h1>
                 <div className="flex w-48 justify-center rounded-md p-2 hover:bg-[#058cc1] bg-[#1d4189] hover:scale-95">
@@ -725,8 +809,8 @@ const Portal = () => {
                   </tbody>
                 </table>
               </div>
-            </div>
-            <div className="mt-3 flex-col w-[100%] bg-white p-3 text-lg">
+            </div> */}
+            {/* <div className="mt-3 flex-col w-[100%] bg-white p-3 text-lg">
               <h1>Portal Password Reset</h1>
               <Box
                 className="ml-2 mt-3"
@@ -774,7 +858,7 @@ const Portal = () => {
               <div className="flex w-48 justify-center rounded-md p-2 hover:bg-[#058cc1] bg-[#1d4189] hover:scale-95 m-3">
                 <button className="text-md text-white">Reset Password</button>
               </div>
-            </div>
+            </div> */}
           </div>
           {/* <BorrowerMail/> */}
           {/* <ToastContainer /> */}

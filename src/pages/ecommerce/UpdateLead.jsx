@@ -26,8 +26,17 @@ import LeadDetails from "./LeadNotes";
 import ExtendedPropertyInfo from "./ExtendedPropertyInfo";
 import { CgDetailsMore } from "react-icons/cg";
 import { GiPortal } from "react-icons/gi";
+import UpdateCoBorrower from "./UpdateCoBorrower";
+import UpdateAddressInfo from "./UpdateAddressInfo";
+import UpdateAsset from "./UpdateAsset";
+import UpdateCreditInfo from "./UpdateCreditInfo";
+import UpdateLoanDetail from "./UpdateLoanDetail";
+import UpdateProperty from "./UpdateProperty";
+import UpdateAgent from "./UpdateAgent";
+import UpdateMiletryInfo from "./UpdateMiletryInfo";
+import { Try } from "@mui/icons-material";
 
-const DetailsOfLead = () => {
+const UpdateLead = () => {
   const [value, setValue] = useState(0);
   const [coBorrower, setCoBorrower] = useState([]);
   const [contact, setContact] = useState([]);
@@ -39,6 +48,7 @@ const DetailsOfLead = () => {
   const [email, setEmail] = useState();
   const [suffix, setSuffix] = useState();
   const [income, setIncome] = useState();
+  const [applicationStatus, setApplicationStatus] = useState();
   const [incomeType, setIncomeType] = useState();
   const [martialStatus, setMartialStatus] = useState();
   const [clearFields, setClearFields] = useState(false);
@@ -61,7 +71,44 @@ const DetailsOfLead = () => {
   const addContact = () => {
     setContact([...contact, "Contact Component"]);
   };
-
+  const UpdateLeads = async () => {
+    try {
+      const result = await axios.put(
+        `${import.meta.env.VITE_REACT_APP_SERVER_URL}/lead/update/user/${
+          Location.state.id
+        }`,
+        {
+          assets: assetsObj,
+          address_info: addressObj,
+          lead: {
+            firstname: firstname,
+            middlename: middlename,
+            lastname: lastname,
+            email: email,
+            phone: phone,
+            martial_status: martialStatus,
+            suffix: suffix,
+          },
+          military_infos: militaryObj,
+          loan_details: loanObj,
+          coborrower_details: coBorrowerObj,
+          credit_verification: creditObj,
+          property_info: propertyObj,
+          real_estate_agent: agentObj,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("AuthToken")}`,
+          },
+        }
+      );
+      console.log(result);
+      toast.success("Lead Updated Successfully");
+      Navigate("/leadDataTable");
+    } catch (error) {
+      console.log("Error while updating ", error);
+    }
+  };
   useEffect(() => {
     try {
       axios
@@ -135,7 +182,7 @@ const DetailsOfLead = () => {
             <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
               <WelcomeBanner />
             </div>
-            <Box sx={{ width: 1100 }} className="flex justify-center mb-5">
+            {/* <Box sx={{ width: 1100 }} className="flex justify-center mb-5">
               <BottomNavigation
                 showLabels
                 value={value}
@@ -153,17 +200,17 @@ const DetailsOfLead = () => {
                   onClick={() =>
                     Navigate("/portal", {
                       state: {
-                        leadId: Location.state.id,
+                        leadId:`${Location.state.id}`,
                         firstName: firstname,
                         lastName: lastname,
                         email: email,
-                        phone: phone,
                       },
                     })
                   }
                 />
               </BottomNavigation>
-            </Box>
+            </Box> */}
+
             <Box
               className="border-solid border-2 rounded-md border-indigo-200 px-2 py-4 ml-2"
               component="form"
@@ -177,7 +224,6 @@ const DetailsOfLead = () => {
               <TextField
                 id="outlined-basic"
                 variant="outlined"
-                disabled
                 label="Suffix"
                 type="text"
                 InputLabelProps={{
@@ -190,7 +236,6 @@ const DetailsOfLead = () => {
                 id="outlined-basic"
                 variant="outlined"
                 label="FirstName"
-                disabled
                 type="text"
                 InputLabelProps={{
                   shrink: true,
@@ -201,7 +246,6 @@ const DetailsOfLead = () => {
               <TextField
                 id="outlined-password-input"
                 label="MiddleName"
-                disabled
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -211,7 +255,6 @@ const DetailsOfLead = () => {
               <TextField
                 id="outlined-password-input"
                 label="LastName"
-                disabled
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -221,7 +264,6 @@ const DetailsOfLead = () => {
               <TextField
                 id="outlined-password-input"
                 label="Mobile Phone"
-                disabled
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -231,7 +273,6 @@ const DetailsOfLead = () => {
               <TextField
                 id="outlined-password-input"
                 label="Email"
-                disabled
                 type="email"
                 InputLabelProps={{
                   shrink: true,
@@ -242,8 +283,6 @@ const DetailsOfLead = () => {
               <TextField
                 id="outlined-password-input"
                 label="Martial Status"
-                disabled
-                // type="email"
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -253,7 +292,6 @@ const DetailsOfLead = () => {
               <TextField
                 id="outlined-password-input"
                 label="Additional Incomes"
-                disabled
                 type="email"
                 InputLabelProps={{
                   shrink: true,
@@ -263,18 +301,17 @@ const DetailsOfLead = () => {
               />
               <TextField
                 id="outlined-password-input"
-                label="Income Type"
-                disabled
-                type="email"
+                label="Application Status"
+                type="text"
                 InputLabelProps={{
                   shrink: true,
                 }}
-                value={incomeType}
-                onChange={(e) => setIncomeType(e.target.value)}
+                value={applicationStatus}
+                onChange={(e) => setApplicationStatus(e.target.value)}
               />
             </Box>
             <div className="ml-4 mb-4 mt-4">
-              <AddCoBorrower d={coBorrowerObj} />
+              <UpdateCoBorrower d={coBorrowerObj} ud={setCoBorrowerObj} />
               {/* {coBorrower.map((index) => (
                 <AddCoBorrower
                   d={coBorrowerData[index + 1]}
@@ -287,7 +324,7 @@ const DetailsOfLead = () => {
               ))} */}
             </div>
             <div className="ml-4 mb-4 mt-4">
-              <AddContact d={addressObj} />
+              <UpdateAddressInfo d={addressObj} ud={setAddressObj} />
               {/* {contact.map((index) => (
                 <AddContact
                   d={contactData[index + 1]}
@@ -300,22 +337,25 @@ const DetailsOfLead = () => {
               ))} */}
             </div>
             <div className="ml-4 mb-4 mt-4">
-              <OpportunityDetails d={assetsObj} />
+              <UpdateAsset d={assetsObj} ud={setAssetsObj} />
             </div>
             <div className="ml-4 mb-4 mt-4">
-              <RefinanceDetails d={creditObj} />
+              <UpdateCreditInfo d={creditObj} ud={setCreditObj} />
             </div>
             <div className="ml-4 mb-4 mt-4">
-              <PurchaseDetails d={loanObj} />
+              <UpdateLoanDetail d={loanObj} ud={setLoanObj} />
             </div>
             <div className="ml-4 mb-4 mt-4">
-              <QualificationQuestions d={propertyObj} />
+              <UpdateProperty d={propertyObj} ud={setPropertyObj} />
             </div>
             <div className="ml-4 mb-4 mt-4">
-              <ExtendedPropertyInfo d={agentObj} />
+              <UpdateAgent d={agentObj} ud={setAgentObj} />
             </div>
             <div className="ml-4 mb-4 mt-4">
-              <LeadDetails d={militaryObj} />
+              <UpdateMiletryInfo d={militaryObj} ud={setMilitaryObj} />
+              <Button onClick={UpdateLeads} variant="contained" className="m-3">
+              Update
+            </Button>
             </div>
           </main>
         </div>
@@ -324,4 +364,4 @@ const DetailsOfLead = () => {
   );
 };
 
-export default DetailsOfLead;
+export default UpdateLead;

@@ -69,7 +69,7 @@ function WelcomeBanner() {
       {/* Content */}
       <div className="relative">
         <h1 className="text-2xl md:text-3xl text-slate-800 font-bold mb-1">
-          GOOD AFTERNOON, MSF LENDING INC. 👋
+          Welcome to Sophy CRM. 👋
         </h1>
         <p>Here is what’s happening</p>
       </div>

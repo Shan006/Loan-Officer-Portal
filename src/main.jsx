@@ -8,7 +8,8 @@ import { Windmill } from "@windmill/react-ui";
 import myTheme from "../myTheme";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
+  // <React.StrictMode>
+  <>
     <Toaster
       position="top-right"
       toastOptions={{
@@ -22,9 +23,11 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <Router>
       <AuthProvider>
         <Windmill theme={myTheme}>
+          {/* <Windmill> */}
           <App />
         </Windmill>
       </AuthProvider>
     </Router>
-  </React.StrictMode>
+  </>
+  /* </React.StrictMode> */
 );

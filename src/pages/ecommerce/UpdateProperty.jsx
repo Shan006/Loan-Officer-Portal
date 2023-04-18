@@ -3,7 +3,11 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 
-const QualificationQuestions = (props) => {
+const UpdateProperty = (props) => {
+  // const[props.d,props.ud]=useState();
+  // useEffect(()=>{
+  //     setprops.d(props.d)
+  // },[props.d]);
   return (
     <>
       <div className="border-solid border-2 rounded-md border-indigo-200 py-3 mt-4">
@@ -20,8 +24,10 @@ const QualificationQuestions = (props) => {
           <TextField
             id="outlined-password-input"
             label="State"
-            disabled
             value={props.d ? props.d.state : ""}
+            onChange={(e) => props.ud({ ...props.d, state: e.target.value })}
+            // value={props.d?props.d.state:''}
+
             InputLabelProps={{
               shrink: true,
             }}
@@ -29,8 +35,9 @@ const QualificationQuestions = (props) => {
           <TextField
             id="outlined-password-input"
             label="City"
-            disabled
             value={props.d ? props.d.city : ""}
+            onChange={(e) => props.ud({ ...props.d, city: e.target.value })}
+            // value={props.d?props.d.city:''}
             InputLabelProps={{
               shrink: true,
             }}
@@ -38,8 +45,10 @@ const QualificationQuestions = (props) => {
           <TextField
             id="outlined-password-input"
             label="Zip Code"
-            disabled
             value={props.d ? props.d.zip : ""}
+            onChange={(e) => props.ud({ ...props.d, zip: e.target.value })}
+            // value={props.d?props.d.zip:''}
+
             InputLabelProps={{
               shrink: true,
             }}
@@ -47,8 +56,12 @@ const QualificationQuestions = (props) => {
           <TextField
             id="outlined-password-input"
             label="Subject Property Address"
-            disabled
             value={props.d ? props.d.subject_property_address : ""}
+            onChange={(e) =>
+              props.ud({ ...props.d, subject_property_address: e.target.value })
+            }
+            // value={props.d?props.d.subject_property_address:''}
+
             InputLabelProps={{
               shrink: true,
             }}
@@ -59,4 +72,4 @@ const QualificationQuestions = (props) => {
   );
 };
 
-export default QualificationQuestions;
+export default UpdateProperty;

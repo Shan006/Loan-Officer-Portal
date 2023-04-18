@@ -5,6 +5,8 @@ import AuthImage from "../images/auth-image.jpg";
 import AuthDecoration from "../images/auth-decoration.png";
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import SophyLogoremovebgpreview from "../images/SophyLogoremovebgpreview.png";
+import uuid from "react-uuid";
 import { AuthContext } from "../context/AuthContext";
 
 function Signin() {
@@ -16,11 +18,11 @@ function Signin() {
   });
 
   const Navigate = useNavigate();
-
-  const { setSession } = useContext(AuthContext);
+  const { socket } = useContext(AuthContext);
 
   const submitHandler = (e) => {
     e.preventDefault();
+    // console.log(socket);
     try {
       axios
         .post(
@@ -33,15 +35,18 @@ function Signin() {
             password: "",
           });
           console.log(res.data);
-          setSession({
-            token: res.data.token,
-            isLogin: true,
-          });
+          localStorage.setItem("token", res.data.token);
+          const dataObj = {
+            room: uuid(),
+            userEmail: data.email,
+          };
+          socket.emit("join_room_login", dataObj);
           toast.success("LoggedIn Successfully");
           Navigate("/");
         })
         .catch((err) => {
-          toast.error(err.response.data.error);
+          console.log(err);
+          toast.error("Invalid Credentials");
         });
     } catch (error) {
       toast.error("Something went wrong!");
@@ -59,7 +64,12 @@ function Signin() {
               <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
                 {/* Logo */}
                 <Link className="block" to="/">
-                  <svg width="32" height="32" viewBox="0 0 32 32">
+                  <img
+                    src={SophyLogoremovebgpreview}
+                    alt="Image"
+                    className="w-32 h-22 mt-16"
+                  />
+                  {/* <svg width="32" height="32" viewBox="0 0 32 32">
                     <defs>
                       <linearGradient
                         x1="28.538%"
@@ -95,14 +105,14 @@ function Signin() {
                       d="M2.223 24.14L29.777 7.86A15.926 15.926 0 0132 16c0 8.837-7.163 16-16 16-5.864 0-10.991-3.154-13.777-7.86z"
                       fill="url(#logo-b)"
                     />
-                  </svg>
+                  </svg> */}
                 </Link>
               </div>
             </div>
 
             <div className="max-w-sm mx-auto px-4 py-8">
-              <h1 className="text-3xl text-slate-800 font-bold mb-6">
-                Welcome back! ✨
+              <h1 className="text-3xl text-blue-900 font-bold mb-6">
+                SOPHY CRM! ✨
               </h1>
               {/* Form */}
               <form onSubmit={submitHandler}>
@@ -173,7 +183,7 @@ function Signin() {
                 </div> */}
                 {/* Warning */}
                 <div className="mt-5">
-                  <div className="bg-amber-100 text-amber-600 px-3 py-2 rounded">
+                  {/* <div className="bg-amber-100 text-amber-600 px-3 py-2 rounded">
                     <svg
                       className="inline w-3 h-3 shrink-0 fill-current mr-2"
                       viewBox="0 0 12 12"
@@ -184,7 +194,7 @@ function Signin() {
                       To support you during the pandemic super pro features are
                       free until March 31st.
                     </span>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -203,13 +213,13 @@ function Signin() {
             height="1024"
             alt="Authentication"
           />
-          <img
+          {/* <img
             className="absolute top-1/4 left-0 -translate-x-1/2 ml-8 hidden lg:block"
             src={AuthDecoration}
             width="218"
             height="224"
             alt="Authentication decoration"
-          />
+          /> */}
         </div>
       </div>
     </main>

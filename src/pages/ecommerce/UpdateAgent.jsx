@@ -3,7 +3,11 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 
-const ExtendedPropertyInfo = (props) => {
+const UpdateAgent = (props) => {
+  // const[updateAgent,setUpdateAgent]=useState();
+  // useEffect(()=>{
+  //     setUpdateAgent(props.d);
+  // },[props.d]);
   return (
     <>
       <div className="border-solid border-2 rounded-md border-indigo-200 py-3 mt-4">
@@ -20,47 +24,62 @@ const ExtendedPropertyInfo = (props) => {
           <TextField
             id="outlined-password-input"
             label="FirstName"
-            disabled
             InputLabelProps={{
               shrink: true,
             }}
             value={props.d ? props.d.agent_first_name : ""}
+            onChange={(e) =>
+              props.ud({ ...props.d, agent_first_name: e.target.value })
+            }
+            // value={props.d?props.d.agent_first_name:''}
           />
           <TextField
             id="outlined-password-input"
             label="LastName"
-            disabled
             InputLabelProps={{
               shrink: true,
             }}
             value={props.d ? props.d.agent_last_name : ""}
+            onChange={(e) =>
+              props.ud({ ...props.d, agent_last_name: e.target.value })
+            }
+            // value={props.d?props.d.agent_last_name:''}
           />
           <TextField
             id="outlined-password-input"
             label="Email"
-            disabled
             InputLabelProps={{
               shrink: true,
             }}
             value={props.d ? props.d.agent_email : ""}
+            onChange={(e) =>
+              props.ud({ ...props.d, agent_email: e.target.value })
+            }
+            // value={props.d?props.d.agent_email:''}
           />
           <TextField
             id="outlined-password-input"
             label="Phone Number"
-            disabled
             InputLabelProps={{
               shrink: true,
             }}
             value={props.d ? props.d.agent_phone : ""}
+            onChange={(e) =>
+              props.ud({ ...props.d, agent_phone: e.target.value })
+            }
+            // value={props.d?props.d.agent_phone:''}
           />
           <TextField
             id="outlined-password-input"
             label="Is RealState Agent?"
-            disabled
             InputLabelProps={{
               shrink: true,
             }}
             value={props.d ? props.d.is_real_estate_agent : ""}
+            onChange={(e) =>
+              props.ud({ ...props.d, is_real_estate_agent: e.target.value })
+            }
+            // value={props.d?props.d.is_real_estate_agent:''}
           />
         </Box>
       </div>
@@ -68,4 +87,4 @@ const ExtendedPropertyInfo = (props) => {
   );
 };
 
-export default ExtendedPropertyInfo;
+export default UpdateAgent;

@@ -1,5 +1,6 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 import "./css/style.css";
 
@@ -74,15 +75,23 @@ import { AuthContext } from "./context/AuthContext";
 import ProtectedRoute from "./ProtectedRoute";
 import RedirectRoute from "./RedirectRoute";
 import AddCustomers from "./pages/ecommerce/AddCustomers";
+import UpdateLead from "./pages/ecommerce/UpdateLead";
 import Portal from "./pages/ecommerce/Portal";
 import DetailsOfLead from "./pages/ecommerce/DetailsOfLead";
-import UnAuthorizedSignIn from "./pages/UnAuthorizedSignIn";
-import DataTabel from "./pages/ecommerce/DataTabel";
+import AllReports from "./pages/reports/AllReports";
+import AllLeads from "./pages/ecommerce/AllLeads";
+import AssignTask from "./pages/tasks/AssignTask";
+import UpdateTask from "./pages/tasks/UpdateTask";
+
+import io from "socket.io-client";
+
+const socket = io.connect(import.meta.env.VITE_REACT_APP_SOCKET_URL);
 
 function App() {
   const location = useLocation();
 
-  // const { session } = useContext(AuthContext);
+  const { setSocket, userData } = useContext(AuthContext);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     document.querySelector("html").style.scrollBehavior = "auto";
@@ -90,8 +99,37 @@ function App() {
     document.querySelector("html").style.scrollBehavior = "";
   }, [location.pathname]); // triggered on route change
 
+  useEffect(() => {
+    setSocket(socket);
+  });
+
+  const allUsers = [];
+  let count = 0;
+
+  useEffect(() => {
+    if (userData !== undefined) {
+      socket.emit("addUser", userData?._id);
+      socket.on("getUsers", (users) => {
+        users.forEach((element) => {
+          console.log(allUsers);
+          !allUsers.some((user) => user.userId === element.userId) &&
+            allUsers.push(element);
+        });
+      });
+    } else {
+      null;
+    }
+  }, [userData]);
+
   // useEffect(() => {
-  //   console.log(session);
+  //   socket.on("notification", (data) => {
+  //     setUnreadCount((count) => count + 1);
+  // console.log("A New Message Recieved");
+  // alert("A New Message Recieved");
+  // count++;
+  // success("A New Message Received");
+  // window.alert("A New Recieved");
+  //   });
   // }, []);
 
   return (
@@ -104,23 +142,49 @@ function App() {
         />
         <Route path="/dashboard/analytics" element={<Analytics />} />
         <Route path="/dashboard/fintech" element={<Fintech />} />
+        {/* leads */}
+        {/* <Route path="/ecommerce/customers" element={<AllLeads />} /> */}
         <Route
-          path="/ecommerce/customers"
-          element={<ProtectedRoute Component={Customers} />}
+          exact
+          path="/leadDataTable"
+          element={<ProtectedRoute Component={AllLeads} />}
         />
+        {/* <Route path="/ecommerce/customer/add" element={<AddCustomers />} /> */}
         <Route
-          path="/ecommerce/customer/add"
+          exact
+          path="/addCustomer"
           element={<ProtectedRoute Component={AddCustomers} />}
         />
         <Route
+          path="/updateLead"
+          element={<ProtectedRoute Component={UpdateLead} />}
+        />
+        {/* <Route
           path="/ecommerce/customers/leadDetails"
+          element={<DetailsOfLead />}
+        /> */}
+        <Route
+          exact
+          path="/Leaddetails"
           element={<ProtectedRoute Component={DetailsOfLead} />}
         />
+        {/* <Route path="/ecommerce/customers/portal" element={<Portal />} /> */}
+
         <Route
-          path="/ecommerce/customers/portal"
+          exact
+          path="/portal"
           element={<ProtectedRoute Component={Portal} />}
         />
-        <Route path="/table" element={<DataTabel />} />
+
+        {/* Reports */}
+
+        {/* <Route path="/report/leads" element={<AllReports />} /> */}
+        <Route
+          exact
+          path="/reports/allreports"
+          element={<ProtectedRoute Component={AllReports} />}
+        />
+
         <Route path="/ecommerce/orders" element={<Orders />} />
         <Route path="/ecommerce/invoices" element={<Invoices />} />
         <Route path="/ecommerce/shop" element={<Shop />} />
@@ -148,11 +212,33 @@ function App() {
         <Route path="/job/job-listing" element={<JobListing />} />
         <Route path="/job/job-post" element={<JobPost />} />
         <Route path="/job/company-profile" element={<CompanyProfile />} />
-        <Route path="/messages" element={<Messages />} />
-        <Route path="/tasks/kanban" element={<TasksKanban />} />
         <Route
-          path="/tasks/list"
+          path="/messages"
+          element={
+            <Messages
+              socket={socket}
+              activeUsers={allUsers}
+              notifyCount={count}
+            />
+          }
+        />
+        <Route path="/tasks/kanban" element={<TasksKanban />} />
+        {/* tasks */}
+        {/* <Route path="/tasks/list" element={<TasksList />} /> */}
+        <Route
+          exact
+          path="/assignTask"
+          element={<ProtectedRoute Component={AssignTask} />}
+        />
+        <Route
+          exact
+          path="/task/alltasksDataTable"
           element={<ProtectedRoute Component={TasksList} />}
+        />
+        <Route
+          exact
+          path="/task/updateTask"
+          element={<ProtectedRoute Component={UpdateTask} />}
         />
         <Route path="/inbox" element={<Inbox />} />
         <Route path="/calendar" element={<Calendar />} />
@@ -169,7 +255,7 @@ function App() {
         <Route path="/utility/404" element={<PageNotFound />} />
         <Route path="/utility/knowledge-base" element={<KnowledgeBase />} />
         <Route path="/signin/:userId" element={<Signin />} />
-        <Route path="/signin/unauthorized" element={<UnAuthorizedSignIn />} />
+        {/* <Route path="/signin/unauthorized" element={<UnAuthorizedSignIn />} /> */}
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/onboarding-01" element={<Onboarding01 />} />
         <Route path="/onboarding-02" element={<Onboarding02 />} />

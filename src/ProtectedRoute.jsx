@@ -1,10 +1,8 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Navigate } from "react-router-dom";
-import { AuthContext } from "./context/AuthContext";
 
 const ProtectedRoute = ({ Component }) => {
-  const { session } = useContext(AuthContext);
-  return session.isLogin ? (
+  return localStorage.getItem("token") ? (
     <Component />
   ) : (
     <Navigate to="/signin/unauthorized" />
