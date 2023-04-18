@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import BarChart from "../../charts/BarChart01";
+import BarChart01LeadCount from "../../charts/BarChart01LeadCount";
 import axios from "axios";
 
 // Import utilities
 import { tailwindConfig } from "../../utils/Utils";
 
-function DashboardCard04() {
+function DashboardCard04LeadCount() {
   const [loanOfficers, setLoanOfficers] = useState([]);
-  const [loanValues, setLoanValues] = useState([]);
+  const [leadCounts, setLeadCounts] = useState([]);
   const [isTrue, setIsTrue] = useState(false);
   useEffect(() => {
     try {
@@ -15,7 +15,7 @@ function DashboardCard04() {
         .get(
           `${
             import.meta.env.VITE_REACT_APP_SERVER_URL
-          }/user_management/loanComparison`,
+          }/user_management/leadComparison`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -27,7 +27,7 @@ function DashboardCard04() {
           console.log("Leads", response.data.leads);
           response.data.leads.forEach((element) => {
             loanOfficers.push(element.loanName);
-            loanValues.push(element.total_loan_value);
+            leadCounts.push(element.count);
             setIsTrue(true);
           });
         })
@@ -80,8 +80,8 @@ function DashboardCard04() {
     // labels: ["John", "Jane", "Mark", "Alice", "Bob"],
     datasets: [
       {
-        label: "Loan Value in $",
-        data: loanValues,
+        label: "Lead Count",
+        data: leadCounts,
         // data: [40000, 62000, 42000, 71000, 49000],
         backgroundColor: tailwindConfig().theme.colors.indigo[400],
         // backgroundColor: "rgba(64, 162, 235, 0.2)",
@@ -111,7 +111,7 @@ function DashboardCard04() {
     <div className="flex flex-col col-span-full sm:col-span-6 bg-white shadow-lg rounded-sm border border-slate-200">
       <header className="px-5 py-4 border-b border-slate-100">
         <h2 className="font-semibold text-slate-800 text-center">
-          Loan Value Comparison
+          Lead Comparison
         </h2>
       </header>
       {/* Chart built with Chart.js 3 */}
@@ -119,7 +119,7 @@ function DashboardCard04() {
       {/* <BarChart data={chartData} width={595} height={248} /> */}
       {isTrue ? (
         <>
-          <BarChart data={data} options={options} />
+          <BarChart01LeadCount data={data} options={options} />
         </>
       ) : null}
       {/* <BarChart data={data} options={options} /> */}
@@ -127,4 +127,4 @@ function DashboardCard04() {
   );
 }
 
-export default DashboardCard04;
+export default DashboardCard04LeadCount;

@@ -10,6 +10,7 @@ import DashboardCard01 from "../partials/dashboard/DashboardCard01";
 import DashboardCard02 from "../partials/dashboard/DashboardCard02";
 import DashboardCard03 from "../partials/dashboard/DashboardCard03";
 import DashboardCard04 from "../partials/dashboard/DashboardCard04";
+import DashboardCard04LeadCount from "../partials/dashboard/DashboardCard04LeadCount";
 import DashboardCard05 from "../partials/dashboard/DashboardCard05";
 import DashboardCard06 from "../partials/dashboard/DashboardCard06";
 import DashboardCard07 from "../partials/dashboard/DashboardCard07";
@@ -101,10 +102,13 @@ function Dashboard() {
               <DashboardCard02 appIntakeCount={appIntakeCount} />
               {/* Doughnut chart (Refinance Vs Purchase) */}
               <DashboardCard06 />
-              {/* Bar chart (Direct vs Indirect) */}
+              {/* Bar chart (Loan Value) */}
               <DashboardCard04 />
+              {/* Bar chart (lead Count) */}
+              <DashboardCard04LeadCount />
               {/* Line chart (Acme Professional) */}
-              {/* <DashboardCard03 /> */}s{/* Line chart (Real Time Value) */}
+              {/* <DashboardCard03 /> */}
+              {/* Line chart (Real Time Value) */}
               {/* <DashboardCard05 /> */}
               {/* Table (Top Channels) */}
               {/* <DashboardCard07 /> */}
