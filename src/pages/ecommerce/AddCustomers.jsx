@@ -23,6 +23,7 @@ import QualificationQuestions from "./QualifyingQuestions";
 import LeadDetails from "./LeadNotes";
 import ExtendedPropertyInfo from "./ExtendedPropertyInfo";
 import AddRealtor from "./AddRealtor";
+import PredefinedForm from "./portalComponents/PredefinedForm";
 
 const AddCustomers = () => {
   const [userId, setUserId] = useState("");
@@ -51,6 +52,8 @@ const AddCustomers = () => {
   const [status, setStatus] = useState();
   const [realtorDetails, setRealtorDetails] = useState();
   const [isValid, setIsValid] = useState(false);
+  const [docs, setDocs] = useState(PredefinedForm[0]);
+  const [docNames, setDocNames] = useState([]);
 
   const Navigate = useNavigate();
 
@@ -75,6 +78,11 @@ const AddCustomers = () => {
 
   const AddData = (e) => {
     e.preventDefault();
+    let ValidDocs = docs.data.filter((item) => item.status === true);
+    ValidDocs.forEach((element) => {
+      docNames.push(element.data);
+    });
+    console.log("Document Names", docNames);
     if ((firstname === "", lastname === "", phone === "", email === "")) {
       toast("Please Fill The Required Fields", {
         position: "top-center",
@@ -86,6 +94,7 @@ const AddCustomers = () => {
         lastname,
         phone,
         email,
+        documents_required: docNames,
         realtorDetails,
       };
 
@@ -108,6 +117,7 @@ const AddCustomers = () => {
           toast.success("Lead Added Successfully", {
             position: "top-center",
           });
+          Navigate("/leadDataTable");
         })
         .catch(function (error) {
           console.log(error);
@@ -128,6 +138,7 @@ const AddCustomers = () => {
         lastname,
         phone,
         email,
+        documents_required: docNames,
       };
 
       axios
@@ -149,6 +160,7 @@ const AddCustomers = () => {
           toast.success("Lead Added Successfully", {
             position: "top-center",
           });
+          Navigate("/leadDataTable");
         })
         .catch(function (error) {
           console.log(error);

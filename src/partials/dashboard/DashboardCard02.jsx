@@ -112,7 +112,7 @@ function DashboardCard02({ appIntakeCount }) {
         </h2>
         {/* <div className="text-xs font-semibold text-slate-400 uppercase mb-1">Sales</div> */}
         <div className="flex items-start">
-          <div className="text-3xl font-bold text-slate-800 mr-2">
+          <div className="text-3xl font-bold text-slate-800 mr-2 mb-4">
             {appIntakeCount}
           </div>
           {/* <div className="text-sm font-semibold text-white px-1.5 bg-amber-500 rounded-full">-14%</div>*/}
@@ -121,7 +121,7 @@ function DashboardCard02({ appIntakeCount }) {
       {/* Chart built with Chart.js 3 */}
       <div className="grow">
         {/* Change the height attribute to adjust the chart height */}
-        <LineChart data={chartData} width={389} height={128} />
+        {/* <LineChart data={chartData} width={389} height={128} /> */}
       </div>
     </div>
   );

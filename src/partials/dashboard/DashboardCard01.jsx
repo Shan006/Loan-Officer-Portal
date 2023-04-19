@@ -112,7 +112,7 @@ function DashboardCard01({ leadCount }) {
           Sales
         </div> */}
         <div className="flex items-start">
-          <div className="text-3xl font-bold text-slate-800 mr-2">
+          <div className="text-3xl font-bold text-slate-800 mr-2 mb-4">
             {leadCount}
           </div>
           {/* <div className="text-sm font-semibold text-white px-1.5 bg-emerald-500 rounded-full">
@@ -123,7 +123,7 @@ function DashboardCard01({ leadCount }) {
       {/* Chart built with Chart.js 3 */}
       <div className="grow">
         {/* Change the height attribute to adjust the chart height */}
-        <LineChart data={chartData} width={389} height={128} />
+        {/* <LineChart data={chartData} width={389} height={128} /> */}
       </div>
     </div>
   );
