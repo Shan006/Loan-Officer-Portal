@@ -9,6 +9,9 @@ function DashboardCard04LeadCount() {
   const [loanOfficers, setLoanOfficers] = useState([]);
   const [leadCounts, setLeadCounts] = useState([]);
   const [isTrue, setIsTrue] = useState(false);
+  const [currentMonth, setCurrentMonth] = useState();
+  const [prevMonth, setPrevMonth] = useState();
+
   useEffect(() => {
     try {
       axios
@@ -23,11 +26,24 @@ function DashboardCard04LeadCount() {
           }
         )
         .then(function (response) {
-          console.log("Loan Value Comparison", response.data);
-          console.log("Leads", response.data.leads);
+          console.log("LeadCount", response.data.leads);
+
+          const today = new Date();
+          const previousMonth = new Date();
+          previousMonth.setMonth(today.getMonth() - 1);
+
+          const currentMonthName = today.toLocaleString("default", {
+            month: "long",
+          });
+          const previousMonthName = previousMonth.toLocaleString("default", {
+            month: "long",
+          });
+
+          setCurrentMonth(currentMonthName);
+          setPrevMonth(previousMonthName);
+
           response.data.leads.forEach((element) => {
-            loanOfficers.push(element.loanName);
-            leadCounts.push(element.count);
+            leadCounts.push(element.monthly_lead_count);
             setIsTrue(true);
           });
         })
@@ -41,42 +57,9 @@ function DashboardCard04LeadCount() {
       console.log(error);
     }
   }, []);
-  // const chartData = {
-  // labels: [
-  //   "12-01-2020",
-  //   "01-01-2021",
-  //   "02-01-2021",
-  //   "03-01-2021",
-  //   "04-01-2021",
-  //   "05-01-2021",
-  // ],
-  // datasets: [
-  // Light blue bars
-  // {
-  //   label: "Direct",
-  //   data: [800, 1600],
-  //   // data: [800, 1600, 900, 1300, 1950, 1700],
-  //   backgroundColor: tailwindConfig().theme.colors.blue[400],
-  //   hoverBackgroundColor: tailwindConfig().theme.colors.blue[500],
-  //   barPercentage: 0.66,
-  //   categoryPercentage: 0.66,
-  // },
-  // Blue bars
-  // {
-  //   label: 'Indirect',
-  //   data: [
-  //     4900, 2600, 5350, 4800, 5200, 4800,
-  //   ],
-  //   backgroundColor: tailwindConfig().theme.colors.indigo[500],
-  //   hoverBackgroundColor: tailwindConfig().theme.colors.indigo[600],
-  //   barPercentage: 0.66,
-  //   categoryPercentage: 0.66,
-  // },
-  //   ],
-  // };
 
   const data = {
-    labels: loanOfficers,
+    labels: [currentMonth, prevMonth],
     // labels: ["John", "Jane", "Mark", "Alice", "Bob"],
     datasets: [
       {
@@ -114,15 +97,12 @@ function DashboardCard04LeadCount() {
           Lead Comparison
         </h2>
       </header>
-      {/* Chart built with Chart.js 3 */}
-      {/* Change the height attribute to adjust the chart height */}
-      {/* <BarChart data={chartData} width={595} height={248} /> */}
+
       {isTrue ? (
         <>
           <BarChart01LeadCount data={data} options={options} />
         </>
       ) : null}
-      {/* <BarChart data={data} options={options} /> */}
     </div>
   );
 }

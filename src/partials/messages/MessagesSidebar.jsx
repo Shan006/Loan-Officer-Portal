@@ -11,6 +11,7 @@ function MessagesSidebar({
   chat,
   notifyCount,
   activeUsers,
+  senderId,
 }) {
   return (
     <div
@@ -77,6 +78,7 @@ function MessagesSidebar({
               chat={chat}
               notifyCount={notifyCount}
               activeUsers={activeUsers}
+              senderId={senderId}
             />
             {/* Channels */}
             {/* <Channels msgSidebarOpen={msgSidebarOpen} setMsgSidebarOpen={setMsgSidebarOpen} /> */}

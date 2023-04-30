@@ -1,27 +1,30 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 
 import Image from "../../images/user-avatar-80.png";
-import { useEffect } from "react";
-import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import axios from "axios";
 import { toast } from "react-hot-toast";
+import axios from "axios";
 
-function AccountPanel() {
-  const [sync, setSync] = useState(false);
-  const [image, setImage] = useState(null);
-  const [imageURL, setImageURL] = useState(null);
-  const [name, setName] = useState();
-  const [password, setPassword] = useState();
+function EmailConfigPanel() {
   const { userData } = useContext(AuthContext);
-
-  useEffect(() => {
-    if (userData !== undefined) {
-      axios
-        .get(
-          `${
-            import.meta.env.VITE_REACT_APP_SERVER_URL
-          }/user_management/getImage/${userData._id}`,
+  const [email, setEmail] = useState(userData.email);
+  const [password, setPassword] = useState("");
+  const [portNumber, setPortNumber] = useState("");
+  const [sync, setSync] = useState(false);
+  const CancleHandle = () => {
+    setPassword("");
+    setPortNumber("");
+  };
+  const SaveChanges = async () => {
+    if (password != "" && portNumber != "") {
+      await axios
+        .post(
+          `${import.meta.env.VITE_REACT_APP_SERVER_URL}/emailConfig/user/add`,
+          {
+            email: email,
+            password: password,
+            portNo: portNumber,
+          },
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -30,117 +33,52 @@ function AccountPanel() {
         )
         .then((response) => {
           console.log(response.data);
-          setImageURL(
-            `${import.meta.env.VITE_REACT_APP_IMAGE_URL}/${response.data.image}`
-          );
+          toast.success("Configuration Added Successfully");
+          setEmail();
+          setPassword();
+          setPortNumber();
         })
         .catch((err) => {
-          toast.error("Something Went Wrong");
+          toast.error("SomeThing Went Wrong");
         });
     } else {
-      null;
-    }
-  }, [userData]);
-
-  const handleImageChange = (event) => {
-    setImage(event.target.files[0]);
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const formData = new FormData();
-    formData.append("image", image);
-    try {
-      const response = await axios.post(
-        `${
-          import.meta.env.VITE_REACT_APP_SERVER_URL
-        }/user_management/uploadImage/${userData._id}`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      console.log(response.data);
-      setImageURL(
-        `${import.meta.env.VITE_REACT_APP_IMAGE_URL}/${response.data.file}`
-      );
-    } catch (error) {
-      console.log(error);
+      toast.warn("Please fill all the fields");
     }
   };
-  const ChangeData = async () => {
-    try {
-      const response = await axios.put(
-        `${
-          import.meta.env.VITE_REACT_APP_SERVER_URL
-        }/user_management/updateMe/${userData._id}`,
-        {
-          name,
-          password,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      console.log(response.data);
-      setName("");
-      setPassword("");
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
     <div className="grow">
       {/* Panel body */}
       <div className="p-6 space-y-6">
-        <h2 className="text-2xl text-slate-800 font-bold mb-5">My Account</h2>
+        <h2 className="text-2xl text-slate-800 font-bold mb-5">
+          Email Configration
+        </h2>
         {/* Picture */}
-        <section>
-          {/* className="flex items-center" */}
-          <div>
+        {/* <section>
+          <div className="flex items-center">
             <div className="mr-4">
-              <img
-                className="w-20 h-20 rounded-full"
-                src={imageURL !== null ? imageURL : Image}
-                width="80"
-                height="80"
-                alt="Image"
-              />
-              <input
-                className="mt-4"
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-              />
+              <img className="w-20 h-20 rounded-full" src={Image} width="80" height="80" alt="User upload" />
             </div>
-            <button
-              className=" mt-4 btn-sm bg-indigo-500 hover:bg-indigo-600 text-white"
-              onClick={handleSubmit}
-            >
-              Change
-            </button>
+            <button className="btn-sm bg-indigo-500 hover:bg-indigo-600 text-white">Change</button>
           </div>
-        </section>
+        </section> */}
         {/* Business Profile */}
         <section>
-          {/* <h2 className="text-xl leading-snug text-slate-800 font-bold mb-1"></h2> */}
-          {/* <div className="text-sm">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit.</div> */}
+          {/* <h2 className="text-xl leading-snug text-slate-800 font-bold mb-1">Business Profile</h2> */}
+          <div className="text-sm">
+            Please configure your email .Enter a port number and password{" "}
+          </div>
           <div className="sm:flex sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 mt-5">
             <div className="sm:w-1/3">
               <label className="block text-sm font-medium mb-1" htmlFor="name">
-                Change Name
+                Email
               </label>
               <input
-                id="name"
+                id="email"
                 className="form-input w-full"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                type="email"
+                value={email}
+                disabled
+                // onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div className="sm:w-1/3">
@@ -148,14 +86,29 @@ function AccountPanel() {
                 className="block text-sm font-medium mb-1"
                 htmlFor="business-id"
               >
-                Change Password
+                Password
               </label>
               <input
                 id="business-id"
                 className="form-input w-full"
-                type="text"
+                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <div className="sm:w-1/3">
+              <label
+                className="block text-sm font-medium mb-1"
+                htmlFor="location"
+              >
+                Port Number
+              </label>
+              <input
+                id="port-number"
+                className="form-input w-full"
+                type="text"
+                value={portNumber}
+                onChange={(e) => setPortNumber(e.target.value)}
               />
             </div>
           </div>
@@ -200,12 +153,15 @@ function AccountPanel() {
       <footer>
         <div className="flex flex-col px-6 py-5 border-t border-slate-200">
           <div className="flex self-end">
-            <button className="btn border-slate-200 hover:border-slate-300 text-slate-600">
+            <button
+              className="btn border-slate-200 hover:border-slate-300 text-slate-600"
+              onClick={CancleHandle}
+            >
               Cancel
             </button>
             <button
               className="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-3"
-              onClick={ChangeData}
+              onClick={SaveChanges}
             >
               Save Changes
             </button>
@@ -216,4 +172,4 @@ function AccountPanel() {
   );
 }
 
-export default AccountPanel;
+export default EmailConfigPanel;

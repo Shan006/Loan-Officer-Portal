@@ -13,8 +13,9 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { AuthContext } from "../../context/AuthContext";
 import Image01 from "../../images/user-40-01.jpg";
+import uuid from "react-uuid";
 
-function AllReports() {
+function LoanOfficerReport() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
   const [array, setArray] = React.useState([]);
@@ -25,38 +26,15 @@ function AllReports() {
 
   const columns = [
     { field: "id", headerName: "ID", width: 200 },
-    { field: "firstname", headerName: "First name", width: 130 },
-    { field: "lastname", headerName: "Last name", width: 130 },
-    {
-      field: "email",
-      headerName: "Email",
-      type: "email",
-      width: 150,
-    },
-    {
-      field: "phone",
-      headerName: "Phone",
-      type: "number",
-      width: 150,
-    },
+    { field: "leadname", headerName: "Lead name", width: 130 },
     {
       field: "createdAt",
       headerName: "CreatedAt",
       width: 220,
     },
     {
-      field: "loanbalance",
-      headerName: "LoanBalance",
-      width: 140,
-    },
-    {
-      field: "realtor",
-      headerName: "RealtorRefferal",
-      width: 140,
-    },
-    {
-      field: "status",
-      headerName: "Status",
+      field: "loanvalue",
+      headerName: "LoanValue",
       width: 140,
     },
   ];
@@ -93,7 +71,7 @@ function AllReports() {
           .get(
             `${
               import.meta.env.VITE_REACT_APP_SERVER_URL
-            }/report/user/reportByLoanOfficer/${userData._id}`,
+            }/report/user/loanOfficerReport`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -106,25 +84,14 @@ function AllReports() {
             const leads = data?.lead;
             if (leads !== undefined) {
               leads.forEach((element) => {
-                let properDate = moment(element.leads[0].createdAt).format(
-                  "MMMM Do YYYY"
-                );
+                let properDate = moment(element.created).format("MMMM Do YYYY");
                 const dd = {
-                  id: element._id,
-                  lastname: element.leads[0].lastname,
-                  firstname: element.leads[0].firstname,
-                  email: element.leads[0].email,
-                  phone: element.leads[0].phone,
+                  id: uuid(),
+                  leadname: element.firstname + " " + element.lastname,
                   createdAt: properDate,
-                  loanbalance:
-                    element.loandetails[0] !== undefined
-                      ? element.loandetails[0].estimated_value
-                      : "0",
-                  realtor:
-                    element.leads[0].realtor !== undefined
-                      ? element.leads[0].realtor.firstname
-                      : "No Realtor",
-                  status: "New Lead",
+                  loanvalue: element.monthly_total_loan_value
+                    ? element.monthly_total_loan_value
+                    : "0",
                 };
                 setArray((oldPosts) => [...oldPosts, dd]);
               });
@@ -281,4 +248,4 @@ function AllReports() {
   );
 }
 
-export default AllReports;
+export default LoanOfficerReport;

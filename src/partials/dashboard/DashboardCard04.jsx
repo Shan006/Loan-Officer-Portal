@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import BarChart from "../../charts/BarChart01";
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 // Import utilities
 import { tailwindConfig } from "../../utils/Utils";
@@ -8,7 +9,10 @@ import { tailwindConfig } from "../../utils/Utils";
 function DashboardCard04() {
   const [loanOfficers, setLoanOfficers] = useState([]);
   const [loanValues, setLoanValues] = useState([]);
+  const [currentMonth, setCurrentMonth] = useState();
+  const [prevMonth, setPrevMonth] = useState();
   const [isTrue, setIsTrue] = useState(false);
+
   useEffect(() => {
     try {
       axios
@@ -23,11 +27,24 @@ function DashboardCard04() {
           }
         )
         .then(function (response) {
-          console.log("Loan Value Comparison", response.data);
-          console.log("Leads", response.data.leads);
+          console.log("Loan Value Comparison", response.data.leads);
+
+          const today = new Date();
+          const previousMonth = new Date();
+          previousMonth.setMonth(today.getMonth() - 1);
+
+          const currentMonthName = today.toLocaleString("default", {
+            month: "long",
+          });
+          const previousMonthName = previousMonth.toLocaleString("default", {
+            month: "long",
+          });
+
+          setCurrentMonth(currentMonthName);
+          setPrevMonth(previousMonthName);
+
           response.data.leads.forEach((element) => {
-            loanOfficers.push(element.loanName);
-            loanValues.push(element.total_loan_value);
+            loanValues.push(element.monthly_total_loan_value);
             setIsTrue(true);
           });
         })
@@ -41,52 +58,17 @@ function DashboardCard04() {
       console.log(error);
     }
   }, []);
-  // const chartData = {
-  // labels: [
-  //   "12-01-2020",
-  //   "01-01-2021",
-  //   "02-01-2021",
-  //   "03-01-2021",
-  //   "04-01-2021",
-  //   "05-01-2021",
-  // ],
-  // datasets: [
-  // Light blue bars
-  // {
-  //   label: "Direct",
-  //   data: [800, 1600],
-  //   // data: [800, 1600, 900, 1300, 1950, 1700],
-  //   backgroundColor: tailwindConfig().theme.colors.blue[400],
-  //   hoverBackgroundColor: tailwindConfig().theme.colors.blue[500],
-  //   barPercentage: 0.66,
-  //   categoryPercentage: 0.66,
-  // },
-  // Blue bars
-  // {
-  //   label: 'Indirect',
-  //   data: [
-  //     4900, 2600, 5350, 4800, 5200, 4800,
-  //   ],
-  //   backgroundColor: tailwindConfig().theme.colors.indigo[500],
-  //   hoverBackgroundColor: tailwindConfig().theme.colors.indigo[600],
-  //   barPercentage: 0.66,
-  //   categoryPercentage: 0.66,
-  // },
-  //   ],
-  // };
 
   const data = {
-    labels: loanOfficers,
-    // labels: ["John", "Jane", "Mark", "Alice", "Bob"],
+    labels: [currentMonth, prevMonth],
+    // labels: ["March", "April"],
     datasets: [
       {
         label: "Loan Value in $",
         data: loanValues,
         // data: [40000, 62000, 42000, 71000, 49000],
         backgroundColor: tailwindConfig().theme.colors.indigo[400],
-        // backgroundColor: "rgba(64, 162, 235, 0.2)",
         borderColor: tailwindConfig().theme.colors.indigo[400],
-        // borderColor: "rgba(54, 162, 235, 1)",
         borderWidth: 1,
       },
     ],
@@ -114,15 +96,11 @@ function DashboardCard04() {
           Loan Value Comparison
         </h2>
       </header>
-      {/* Chart built with Chart.js 3 */}
-      {/* Change the height attribute to adjust the chart height */}
-      {/* <BarChart data={chartData} width={595} height={248} /> */}
       {isTrue ? (
         <>
           <BarChart data={data} options={options} />
         </>
       ) : null}
-      {/* <BarChart data={data} options={options} /> */}
     </div>
   );
 }

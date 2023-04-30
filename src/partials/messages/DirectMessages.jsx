@@ -7,6 +7,7 @@ import UserImage03 from "../../images/user-32-03.jpg";
 import UserImage04 from "../../images/user-32-04.jpg";
 import UserImage05 from "../../images/user-32-05.jpg";
 import UserImage06 from "../../images/user-32-06.jpg";
+import { GiFlowerStar } from "react-icons/gi";
 
 function DirectMessages({
   setMsgSidebarOpen,
@@ -15,6 +16,7 @@ function DirectMessages({
   chat,
   notifyCount,
   activeUsers,
+  senderId,
 }) {
   const [users, setUsers] = useState([]);
   const [activeUserNames, setActiveUserNames] = useState();
@@ -141,11 +143,11 @@ function DirectMessages({
                         </>
                       )}
                     </div>
-                    {/* {notifyCount > 0 && (
+                    {/* {senderId && senderId === userData._id && (
                       <>
                         <div className="flex items-center ml-2">
-                          <div className="text-xs inline-flex font-medium bg-indigo-400 text-white rounded-full text-center leading-5 px-2">
-                            notifyCount
+                          <div className="text-xs inline-flex font-medium bg-indigo-400 text-white rounded-full text-center leading-5 p-1">
+                            <GiFlowerStar />
                           </div>
                         </div>
                       </>

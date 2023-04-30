@@ -9,22 +9,191 @@ import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import Conformation from "../tasks/Conformation";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
+import { BsChatText } from "react-icons/bs";
+import { HiOutlinePhoneMissedCall } from "react-icons/hi";
+import { MdOutlineEmail } from "react-icons/md";
+import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  boxShadow: 20,
+  pt: 3,
+  px: 21,
+  pb: 3,
+};
 
 function AllLeads() {
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
   const [array, setArray] = React.useState([]);
-  const [open, setOpen] = useState(false);
+  const [Copen, setCOpen] = useState(false);
   const [deleteID, setdeleteID] = useState();
   const [firstname, setFirstname] = useState();
   const [lastname, setLastname] = useState();
   const Navigate = useNavigate();
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSMSModalOpen, setisSMSModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [emailOpen, setEmailOpen] = useState(false);
+  const [selectedEmail, setSelectedEmail] = useState();
+  const [selectedText, setSelectedText] = useState();
 
   function OpenDelete(id, firstname, lastname) {
     setdeleteID(id);
     setFirstname(firstname);
     setLastname(lastname);
-    setOpen(true);
+    setCOpen(true);
   }
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleEmailOpen = () => {
+    setEmailOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleEmailClose = () => {
+    setEmailOpen(false);
+  };
+
+  const [emailForm, setEmailForm] = useState({
+    to: "",
+    subject: "",
+    message: "",
+  });
+  const [msgForm, setMsgForm] = useState({
+    to: "",
+    message: "",
+  });
+  const EmailFormHandler = (e) => {
+    setEmailForm({
+      ...emailForm,
+      [e.target.name]: e.target.value,
+    });
+  };
+  const MessageFormHandler = (e) => {
+    setMsgForm({
+      ...msgForm,
+      [e.target.name]: e.target.value,
+    });
+  };
+  function openModal() {
+    setIsModalOpen(true);
+  }
+  function closeModal() {
+    setIsModalOpen(false);
+  }
+
+  const SendMsg = async () => {
+    if (msgForm.to == "" && msgForm.message == "") {
+      toast.warn("Please fill all the feilds!!!");
+    } else {
+      try {
+        setLoading(true);
+        const respo = await axios.post(
+          `${import.meta.env.VITE_REACT_APP_SERVER_URL}/conversation/twilioSMS`,
+          {
+            to: selectedText,
+            message: msgForm.message,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        setLoading(false);
+        setMsgForm("");
+        setOpen(false);
+        console.log("MSG response:", respo);
+        toast.success("Message Sent Successfully");
+      } catch (error) {
+        console.log("Error while sending email ", error);
+      }
+    }
+  };
+
+  const SendMail = async () => {
+    if (
+      emailForm.to == "" &&
+      emailForm.subject == "" &&
+      emailForm.message == ""
+    ) {
+      toast.error("Please fill all the feilds!!!");
+    } else {
+      try {
+        setLoading(true);
+        const respo = await axios.post(
+          `${import.meta.env.VITE_REACT_APP_SERVER_URL}/conversation/send`,
+          {
+            email: selectedEmail,
+            subject: emailForm.subject,
+            message: emailForm.message,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        setEmailOpen(false);
+        setLoading(false);
+        setEmailForm("");
+        console.log("Email response:", respo);
+        toast.success("Email Sent Successfully");
+      } catch (error) {
+        console.log("Error while sending email ", error);
+      }
+    }
+  };
+
+  const HandleRingCentral = async () => {
+    console.log("Handle ring central called ");
+    (function () {
+      var rcs = document.createElement("script");
+      rcs.src =
+        "https://ringcentral.github.io/ringcentral-web-widget/adapter.js?stylesUri=https://embbnux.github.io/ringcentral-web-widget-styles/GameofThrones/styles.css";
+      var rcs0 = document.getElementsByTagName("script")[0];
+      rcs0.parentNode.insertBefore(rcs, rcs0);
+      if (window.RCAdapter) {
+        window.RCAdapter.setMinimized(false);
+      }
+    })();
+
+    (function () {
+      window.addEventListener("message", function (e) {
+        const data = e.data;
+        if (data) {
+          switch (data.type) {
+            case "rc-call-ring-notify":
+              var id = number2id(data.call.from, number2user);
+              if (id) {
+                var contact = id2user[id];
+                window.title = contact.character.displayName;
+                window.history.pushState(
+                  "",
+                  contact.character.displayName,
+                  "?id=" + id
+                );
+                loadSingleUser(id, id2user);
+              }
+              break;
+            default:
+              break;
+          }
+        }
+      });
+    })();
+  };
   const columns = [
     {
       field: "id",
@@ -32,6 +201,42 @@ function AllLeads() {
       width: 200,
       headerClassName: "bg-blue-500 text-white text-lg",
       cellClassName: "text-center",
+    },
+    {
+      field: "Sms",
+      headerName: "SMS",
+      width: 90,
+      headerClassName: "bg-blue-500 text-white text-lg",
+      cellClassName: "text-center",
+      renderCell: (params) => (
+        <Button variant="contained" color="primary" onClick={handleOpen}>
+          <BsChatText className="h-5 w-5" />
+        </Button>
+      ),
+    },
+    {
+      field: "Call",
+      headerName: "Call",
+      width: 90,
+      headerClassName: "bg-blue-500 text-white text-lg",
+      cellClassName: "text-center",
+      renderCell: (params) => (
+        <Button variant="contained" color="primary" onClick={HandleRingCentral}>
+          <HiOutlinePhoneMissedCall className="h-5 w-5" />
+        </Button>
+      ),
+    },
+    {
+      field: "Email",
+      headerName: "Email",
+      width: 90,
+      headerClassName: "bg-blue-500 text-white text-lg",
+      cellClassName: "text-center",
+      renderCell: (params) => (
+        <Button variant="contained" color="primary" onClick={handleEmailOpen}>
+          <MdOutlineEmail className="h-5 w-5" />
+        </Button>
+      ),
     },
     {
       field: "firstname",
@@ -72,7 +277,7 @@ function AllLeads() {
     },
     {
       field: "del",
-      headerName: "Action",
+      headerName: "Delete",
       width: 90,
       headerClassName: "bg-blue-500 text-white text-lg",
       cellClassName: "text-center",
@@ -90,7 +295,7 @@ function AllLeads() {
     },
     {
       field: "update",
-      headerName: "Action",
+      headerName: "Update",
       width: 90,
       headerClassName: "bg-blue-500 text-white text-lg",
       cellClassName: "text-center",
@@ -226,6 +431,8 @@ function AllLeads() {
                 checkboxSelection
                 className="curson-pointer"
                 onCellClick={(e) => {
+                  setSelectedEmail(e.row.email);
+                  setSelectedText(e.row.phone);
                   if (e.value === undefined) {
                     null;
                   } else {
@@ -235,22 +442,105 @@ function AllLeads() {
                       },
                     });
                   }
-                  //   Navigate("/Leaddetails", {
-                  //     state: {
-                  //       id: e.id,
-                  //     },
-                  //   });
                 }}
               />
             </div>
           </div>
+          {/* Email Modal */}
+          <Modal
+            open={emailOpen}
+            onClose={handleEmailClose}
+            aria-labelledby="parent-modal-title"
+            aria-describedby="parent-modal-description"
+          >
+            <Box sx={{ ...style, width: 600 }}>
+              <h2 id="parent-modal-title" className="text-xl text-center">
+                <b>EMAIL</b>
+              </h2>
+              <div className="flex flex-col ">
+                <div className="flex flex-col w-full ">
+                  <p className="">To</p>
+                  <input
+                    type="email"
+                    name="to"
+                    value={selectedEmail}
+                    onChange={EmailFormHandler}
+                    className=""
+                  />
+                </div>
+                <div className="flex flex-col w-full ">
+                  <p className="">Subject</p>
+                  <textarea
+                    cols=""
+                    rows="1"
+                    name="subject"
+                    value={emailForm.subject}
+                    onChange={EmailFormHandler}
+                    className=""
+                  />
+                </div>
+                <div className="flex flex-col w-full ">
+                  <p className="">Message</p>
+                  <textarea
+                    cols=""
+                    rows="6"
+                    name="message"
+                    value={emailForm.message}
+                    onChange={EmailFormHandler}
+                    className=""
+                  />
+                  <button
+                    className="mt-5 bg-slate-900 text-white py-2 px-4 text-lg"
+                    onClick={SendMail}
+                  >
+                    Send
+                  </button>
+                </div>
+              </div>
+            </Box>
+          </Modal>
+          {/* SMS Modal */}
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="parent-modal-title"
+            aria-describedby="parent-modal-description"
+          >
+            <Box sx={{ ...style, width: 600 }}>
+              <h2 id="parent-modal-title" className="text-xl text-center">
+                <b>SMS</b>
+              </h2>
+              <h2 className="text-lg">To</h2>
+              <input
+                type="text"
+                name="to"
+                value={selectedText}
+                onChange={MessageFormHandler}
+              />
+              <h2 className="text-lg">Message</h2>
+
+              <input
+                type="text"
+                name="message"
+                value={msgForm.message}
+                onChange={MessageFormHandler}
+              />
+
+              <button
+                className="mt-5 bg-slate-900 text-white py-2 px-4 text-lg"
+                onClick={SendMsg}
+              >
+                Send
+              </button>
+            </Box>
+          </Modal>
         </main>
       </div>
       <Conformation
-        open={open}
+        open={Copen}
         title={firstname + " " + lastname}
         deleteFunction={handleDelete}
-        closeDialog={() => setOpen(false)}
+        closeDialog={() => setCOpen(false)}
       />
     </div>
   );

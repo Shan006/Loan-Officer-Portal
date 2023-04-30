@@ -19,6 +19,7 @@ import DashboardCard09 from "../partials/dashboard/DashboardCard09";
 import DashboardCard10 from "../partials/dashboard/DashboardCard10";
 import DashboardCard11 from "../partials/dashboard/DashboardCard11";
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);

@@ -16,6 +16,7 @@ function Messages({ socket, activeUsers, notifyCount }) {
   const [messageList, setMessageList] = useState([]);
   const [username, setUsername] = useState();
   const [openChat, setOpenChat] = useState(false);
+  const [senderId, setSenderId] = useState();
 
   useEffect(() => {
     contentArea.current.scrollTop = 99999999;
@@ -45,6 +46,7 @@ function Messages({ socket, activeUsers, notifyCount }) {
               chat={setOpenChat}
               notifyCount={notifyCount}
               activeUsers={activeUsers}
+              senderId={senderId}
             />
 
             {/* Messages body */}
@@ -70,6 +72,7 @@ function Messages({ socket, activeUsers, notifyCount }) {
                     username={username}
                     socket={socket}
                     messageList={messageList}
+                    setSenderId={setSenderId}
                   />
                 </>
               ) : (

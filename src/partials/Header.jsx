@@ -144,6 +144,46 @@ function Header({ sidebarOpen, setSidebarOpen }) {
     }
   };
   const navigate = useNavigate();
+
+  const HandleRingCentral = async () => {
+    console.log("Handle ring central called ");
+    (function () {
+      var rcs = document.createElement("script");
+      rcs.src =
+        "https://ringcentral.github.io/ringcentral-web-widget/adapter.js?stylesUri=https://embbnux.github.io/ringcentral-web-widget-styles/GameofThrones/styles.css";
+      var rcs0 = document.getElementsByTagName("script")[0];
+      rcs0.parentNode.insertBefore(rcs, rcs0);
+      if (window.RCAdapter) {
+        window.RCAdapter.setMinimized(false);
+      }
+    })();
+
+    (function () {
+      window.addEventListener("message", function (e) {
+        const data = e.data;
+        if (data) {
+          switch (data.type) {
+            case "rc-call-ring-notify":
+              var id = number2id(data.call.from, number2user);
+              if (id) {
+                var contact = id2user[id];
+                window.title = contact.character.displayName;
+                window.history.pushState(
+                  "",
+                  contact.character.displayName,
+                  "?id=" + id
+                );
+                loadSingleUser(id, id2user);
+              }
+              break;
+            default:
+              break;
+          }
+        }
+      });
+    })();
+  };
+
   return (
     <>
       {/* <ToastContainer /> */}
@@ -178,7 +218,10 @@ function Header({ sidebarOpen, setSidebarOpen }) {
             </div>
             <div className=" sm:block lg:block xl:block md:block hidden  ">
               <div className="flex  justify-between w-96">
-                <div className="h-[40px] w-[40px] rounded-md hover:bg-[#058cc1] bg-[#1d4189] items-center flex justify-center cursor-pointer">
+                <div
+                  className="h-[40px] w-[40px] rounded-md hover:bg-[#058cc1] bg-[#1d4189] items-center flex justify-center cursor-pointer"
+                  onClick={HandleRingCentral}
+                >
                   <BsTelephone className="h-6 w-6 text-white hover:scale-95 " />
                 </div>
                 <div

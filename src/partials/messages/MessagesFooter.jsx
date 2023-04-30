@@ -1,12 +1,20 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import audioFile from "../../assets/notification.mp3";
 
-function MessagesFooter({ setMessageList, msgId, socket, messageList }) {
+function MessagesFooter({
+  setMessageList,
+  msgId,
+  socket,
+  messageList,
+  setSenderId,
+}) {
   const [currentMessage, setCurrentMessage] = useState("");
   const { userData } = useContext(AuthContext);
 
   const SendMessage = async () => {
-    // console.log("Hello");
     if (currentMessage !== "") {
       const messageData = {
         senderId: userData._id,
@@ -14,7 +22,6 @@ function MessagesFooter({ setMessageList, msgId, socket, messageList }) {
         text: currentMessage,
         timestamp: new Date(Date.now()).toISOString(),
       };
-      // console.log(messageData);
 
       await socket.emit("sendMessage", messageData);
       setMessageList((list) => [...list, messageData]);
@@ -24,8 +31,14 @@ function MessagesFooter({ setMessageList, msgId, socket, messageList }) {
 
   useEffect(() => {
     socket.on("getMessage", (data) => {
+      console.log("Data", data);
       setMessageList((list) => [...list, data]);
+      const audio = new Audio(audioFile);
+      audio.play();
+      alert("A Message Is Received");
+      setSenderId(data.senderId);
     });
+
     console.log("Recieving", messageList);
   }, [socket]);
 
@@ -65,6 +78,7 @@ function MessagesFooter({ setMessageList, msgId, socket, messageList }) {
         </button>
         {/* </form> */}
       </div>
+      <ToastContainer />
     </div>
   );
 }

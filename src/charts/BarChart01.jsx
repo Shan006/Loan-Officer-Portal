@@ -29,8 +29,14 @@ function BarChart01({ data, options }) {
 
   const chartRef = useRef();
 
-  if (typeof window.myChart !== "undefined") {
-    window.myChart.destroy();
+  // if (typeof window.myChart !== "undefined") {
+  //   window.myChart.destroy();
+  // }
+  const existingChart = Chart.getChart("myChart");
+
+  // If an existing chart instance exists, destroy it
+  if (existingChart) {
+    existingChart.destroy();
   }
 
   useEffect(() => {

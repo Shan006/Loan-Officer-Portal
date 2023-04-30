@@ -1,7 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
-import { toast } from "react-hot-toast";
-
 import "./css/style.css";
 
 import "./charts/ChartjsConfig";
@@ -82,8 +80,12 @@ import AllReports from "./pages/reports/AllReports";
 import AllLeads from "./pages/ecommerce/AllLeads";
 import AssignTask from "./pages/tasks/AssignTask";
 import UpdateTask from "./pages/tasks/UpdateTask";
+import CreateContact from "./pages/ecommerce/ContactManagment/CreateContact";
+import ContactsDataTable from "./pages/ecommerce/ContactManagment/ContactsDataTable";
 
 import io from "socket.io-client";
+import LoanOfficerReport from "./pages/reports/LoanOfficerReport";
+import EmailConfig from "./partials/settings/EmailConfig";
 
 const socket = io.connect(import.meta.env.VITE_REACT_APP_SOCKET_URL);
 
@@ -105,7 +107,6 @@ function App() {
 
   const allUsers = [];
   let count = 0;
-
   useEffect(() => {
     if (userData !== undefined) {
       socket.emit("addUser", userData?._id);
@@ -123,14 +124,11 @@ function App() {
 
   // useEffect(() => {
   //   socket.on("notification", (data) => {
-  //     setUnreadCount((count) => count + 1);
-  // console.log("A New Message Recieved");
-  // alert("A New Message Recieved");
-  // count++;
-  // success("A New Message Received");
-  // window.alert("A New Recieved");
+  //     // console.log("A New Message Recieved");
+  //     alert("New Message Recieved");
+  //     // setUnreadCount((count) => count + 1);
   //   });
-  // }, []);
+  // }, [socket]);
 
   return (
     <>
@@ -183,6 +181,20 @@ function App() {
           exact
           path="/reports/allreports"
           element={<ProtectedRoute Component={AllReports} />}
+        />
+        <Route
+          exact
+          path="/reports/loanOfficer"
+          element={<ProtectedRoute Component={LoanOfficerReport} />}
+        />
+        {/* Contacts Managment */}
+        <Route
+          path="/contacts/contact"
+          element={<ProtectedRoute Component={CreateContact} />}
+        />
+        <Route
+          path="/contacts/contactList"
+          element={<ProtectedRoute Component={ContactsDataTable} />}
         />
 
         <Route path="/ecommerce/orders" element={<Orders />} />
@@ -243,6 +255,7 @@ function App() {
         <Route path="/inbox" element={<Inbox />} />
         <Route path="/calendar" element={<Calendar />} />
         <Route path="/settings/account" element={<Account />} />
+        <Route path="/settings/emailConfig" element={<EmailConfig />} />
         <Route path="/settings/notifications" element={<Notifications />} />
         <Route path="/settings/apps" element={<Apps />} />
         <Route path="/settings/plans" element={<Plans />} />
