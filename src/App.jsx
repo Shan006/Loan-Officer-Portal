@@ -254,8 +254,18 @@ function App() {
         />
         <Route path="/inbox" element={<Inbox />} />
         <Route path="/calendar" element={<Calendar />} />
-        <Route path="/settings/account" element={<Account />} />
-        <Route path="/settings/emailConfig" element={<EmailConfig />} />
+        {/* <Route path="/settings/account" element={<Account />} /> */}
+        <Route
+          exact
+          path="/settings/account"
+          element={<ProtectedRoute Component={Account} />}
+        />
+        {/* <Route path="/settings/emailConfig" element={<EmailConfig />} /> */}
+        <Route
+          exact
+          path="/settings/emailConfig"
+          element={<ProtectedRoute Component={EmailConfig} />}
+        />
         <Route path="/settings/notifications" element={<Notifications />} />
         <Route path="/settings/apps" element={<Apps />} />
         <Route path="/settings/plans" element={<Plans />} />
@@ -268,7 +278,6 @@ function App() {
         <Route path="/utility/404" element={<PageNotFound />} />
         <Route path="/utility/knowledge-base" element={<KnowledgeBase />} />
         <Route path="/signin/:userId" element={<Signin />} />
-        {/* <Route path="/signin/unauthorized" element={<UnAuthorizedSignIn />} /> */}
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/onboarding-01" element={<Onboarding01 />} />
         <Route path="/onboarding-02" element={<Onboarding02 />} />

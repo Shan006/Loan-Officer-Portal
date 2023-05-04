@@ -60,6 +60,7 @@ function DashboardCard04LeadCount() {
 
   const data = {
     labels: [currentMonth, prevMonth],
+    // labels: [prevMonth, currentMonth],
     // labels: ["John", "Jane", "Mark", "Alice", "Bob"],
     datasets: [
       {

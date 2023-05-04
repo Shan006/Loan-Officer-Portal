@@ -40,7 +40,7 @@ function SettingsSidebar() {
               </span>
             </NavLink>
           </li>
-          <li className="mr-0.5 md:mr-0 md:mb-0.5">
+          {/* <li className="mr-0.5 md:mr-0 md:mb-0.5">
             <NavLink
               end
               to="/settings/notifications"
@@ -67,7 +67,7 @@ function SettingsSidebar() {
                 My Notifications
               </span>
             </NavLink>
-          </li>
+          </li> */}
           <li className="mr-0.5 md:mr-0 md:mb-0.5">
             <NavLink
               end
@@ -116,10 +116,10 @@ function SettingsSidebar() {
       </div>
       {/* Group 2 */}
       <div>
-        <div className="text-xs font-semibold text-slate-400 uppercase mb-3">
+        {/* <div className="text-xs font-semibold text-slate-400 uppercase mb-3">
           Experience
-        </div>
-        <ul className="flex flex-nowrap md:block mr-3 md:mr-0">
+        </div> */}
+        {/* <ul className="flex flex-nowrap md:block mr-3 md:mr-0">
           <li className="mr-0.5 md:mr-0 md:mb-0.5">
             <NavLink
               end
@@ -147,7 +147,7 @@ function SettingsSidebar() {
               </span>
             </NavLink>
           </li>
-        </ul>
+        </ul> */}
       </div>
     </div>
   );

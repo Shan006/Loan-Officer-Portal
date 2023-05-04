@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 
 import Image from "../../images/user-avatar-80.png";
 import { AuthContext } from "../../context/AuthContext";
@@ -7,7 +7,7 @@ import axios from "axios";
 
 function EmailConfigPanel() {
   const { userData } = useContext(AuthContext);
-  const [email, setEmail] = useState(userData.email);
+  const [email, setEmail] = useState(userData && userData.email);
   const [password, setPassword] = useState("");
   const [portNumber, setPortNumber] = useState("");
   const [sync, setSync] = useState(false);
@@ -45,6 +45,15 @@ function EmailConfigPanel() {
       toast.warn("Please fill all the fields");
     }
   };
+
+  // useEffect(() => {
+  //   if (userData !== undefined) {
+  //     setEmail(userData.email);
+  //   } else {
+  //     null;
+  //   }
+  // }, [userData]);
+
   return (
     <div className="grow">
       {/* Panel body */}

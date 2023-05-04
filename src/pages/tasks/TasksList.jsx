@@ -70,7 +70,7 @@ const TasksList = () => {
             OpenDelete(params.row);
           }}
         >
-          <AiOutlineDelete className="h-6 w-6" />
+          <AiOutlineDelete className="h-5 w-5" />
         </Button>
       ),
     },
@@ -98,7 +98,7 @@ const TasksList = () => {
             });
           }}
         >
-          <AiOutlineEdit className="w-6 h-6" />
+          <AiOutlineEdit className="h-5 w-5" />
         </Button>
       ),
     },
@@ -117,7 +117,6 @@ const TasksList = () => {
       console.log("taskssss", result.data);
 
       const taskDatum = result.data.tasks;
-      console.log(taskDatum);
       taskDatum &&
         taskDatum.forEach((element, index) => {
           const dd = {
@@ -128,7 +127,6 @@ const TasksList = () => {
             assignto: element.assigned_to.name,
             status: element.status === "pending" ? "Pending" : element.status,
           };
-          console.log("ddd object in task", dd);
           setData((oldData) => [...oldData, dd]);
         });
     } catch (error) {
@@ -178,7 +176,7 @@ const TasksList = () => {
                 {/* Left: Title */}
                 <div className="mb-4 sm:mb-0">
                   <h1 className="text-2xl md:text-3xl text-slate-800 font-bold">
-                    Tasks ✨
+                    Tasks
                   </h1>
                 </div>
 
@@ -192,6 +190,8 @@ const TasksList = () => {
                   columns={columns}
                   pageSize={5}
                   rowsPerPageOptions={[5]}
+                  rowHeight={40}
+                  headerRowHeight={40}
                   checkboxSelection
                   className="curson-pointer"
                   onCellClick={(e) => {

@@ -162,7 +162,7 @@ function AllReports() {
               {/* Left: Title */}
               <div className="mb-4 sm:mb-0">
                 <h1 className="text-2xl md:text-3xl text-slate-800 font-bold">
-                  Reports ✨
+                  Reports
                 </h1>
               </div>
 
@@ -269,6 +269,8 @@ function AllReports() {
                   columns={columns}
                   pageSize={5}
                   rowsPerPageOptions={[5]}
+                  rowHeight={40}
+                  headerRowHeight={40}
                   checkboxSelection
                   className="curson-pointer"
                 />

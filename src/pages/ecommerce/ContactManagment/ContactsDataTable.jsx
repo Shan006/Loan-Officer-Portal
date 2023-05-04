@@ -15,7 +15,7 @@ const ContactsDataTable = () => {
   const [isData, setIsData] = useState(true);
   const Navigate = useNavigate();
   const columns = [
-    // { field: "id", headerName: "ID", width: 200 },
+    { field: "id", headerName: "ID", width: 200 },
     {
       field: "name",
       headerName: "Name",

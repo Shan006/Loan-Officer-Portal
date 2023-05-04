@@ -37,7 +37,10 @@ const UpdateCreditInfo = (props) => {
             }}
             value={props.d ? props.d.borrower_ssn : ""}
             onChange={(e) =>
-              props.ud({ ...props.d, borrower_ssn: e.target.value })
+              props.ud({
+                ...props.d,
+                borrower_ssn: e.target.value,
+              })
             }
             // value={props.d ? props.d.borrower_ssn : ""}
           />

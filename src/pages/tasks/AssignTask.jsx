@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
@@ -24,6 +25,7 @@ const AssignTask = () => {
   const [isUrgent, setIsUrgent] = useState(false);
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
+  const Location = useLocation();
   const GetTask = async () => {
     try {
       const result = await axios.get(
@@ -48,6 +50,10 @@ const AssignTask = () => {
     const currentDate = new Date();
     let deadlineDate = new Date(deadline);
 
+    if (Location.state) {
+      setUserId(Location.state.leadId);
+    }
+
     if (title != "" && description != "" && deadline != "" && userId != "") {
       // Validate deadline
       if (isNaN(deadlineDate.getTime())) {
@@ -71,6 +77,7 @@ const AssignTask = () => {
             description: description,
             deadline: deadlineDate,
             assigned_to: userId,
+            assigned_to_ref: "Leads",
           },
           {
             headers: {
@@ -135,19 +142,23 @@ const AssignTask = () => {
                 onChange={(e) => setDescription(e.target.value)}
               />
 
-              <TextField
-                id="outlined-select-currency"
-                select
-                label="Assigned To"
-                defaultValue="E"
-                onChange={(e) => setUserId(e.target.value)}
-              >
-                {users.map((option) => (
-                  <MenuItem key={option._id} value={option._id}>
-                    {option.name}
-                  </MenuItem>
-                ))}
-              </TextField>
+              {Location.state ? null : (
+                <>
+                  <TextField
+                    id="outlined-select-currency"
+                    select
+                    label="Assigned To"
+                    defaultValue="E"
+                    onChange={(e) => setUserId(e.target.value)}
+                  >
+                    {users.map((option) => (
+                      <MenuItem key={option._id} value={option._id}>
+                        {option.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </>
+              )}
 
               <TextField
                 id="outlined-password-input"

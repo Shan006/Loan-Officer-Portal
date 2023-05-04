@@ -12,8 +12,10 @@ import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import { BsChatText } from "react-icons/bs";
 import { HiOutlinePhoneMissedCall } from "react-icons/hi";
 import { MdOutlineEmail } from "react-icons/md";
+import { BiTask } from "react-icons/bi";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
+import { SignalCellularConnectedNoInternet0BarSharp } from "@mui/icons-material";
 
 const style = {
   position: "absolute",
@@ -44,6 +46,7 @@ function AllLeads() {
   const [emailOpen, setEmailOpen] = useState(false);
   const [selectedEmail, setSelectedEmail] = useState();
   const [selectedText, setSelectedText] = useState();
+  const [selectedTask, setSelectedTask] = useState();
 
   function OpenDelete(id, firstname, lastname) {
     setdeleteID(id);
@@ -156,6 +159,27 @@ function AllLeads() {
     }
   };
 
+  // useEffect(() => {
+  //   console.log(selectedTask);
+  //   Navigate("/assignTask", {
+  //     state: {
+  //       leadName: selectedTask,
+  //     },
+  //   });
+  // }, [selectedTask]);
+
+  // const GotoTask = () => {
+  //   if (selectedTask) {
+  //     Navigate("/assignTask", {
+  //       state: {
+  //         leadName: selectedTask,
+  //       },
+  //     });
+  //   } else {
+  //     null;
+  //   }
+  // };
+
   const HandleRingCentral = async () => {
     console.log("Handle ring central called ");
     (function () {
@@ -195,49 +219,13 @@ function AllLeads() {
     })();
   };
   const columns = [
-    {
-      field: "id",
-      headerName: "ID",
-      width: 200,
-      headerClassName: "bg-blue-500 text-white text-lg",
-      cellClassName: "text-center",
-    },
-    {
-      field: "Sms",
-      headerName: "SMS",
-      width: 90,
-      headerClassName: "bg-blue-500 text-white text-lg",
-      cellClassName: "text-center",
-      renderCell: (params) => (
-        <Button variant="contained" color="primary" onClick={handleOpen}>
-          <BsChatText className="h-5 w-5" />
-        </Button>
-      ),
-    },
-    {
-      field: "Call",
-      headerName: "Call",
-      width: 90,
-      headerClassName: "bg-blue-500 text-white text-lg",
-      cellClassName: "text-center",
-      renderCell: (params) => (
-        <Button variant="contained" color="primary" onClick={HandleRingCentral}>
-          <HiOutlinePhoneMissedCall className="h-5 w-5" />
-        </Button>
-      ),
-    },
-    {
-      field: "Email",
-      headerName: "Email",
-      width: 90,
-      headerClassName: "bg-blue-500 text-white text-lg",
-      cellClassName: "text-center",
-      renderCell: (params) => (
-        <Button variant="contained" color="primary" onClick={handleEmailOpen}>
-          <MdOutlineEmail className="h-5 w-5" />
-        </Button>
-      ),
-    },
+    // {
+    //   field: "id",
+    //   headerName: "ID",
+    //   width: 200,
+    //   headerClassName: "bg-blue-500 text-white text-lg",
+    //   cellClassName: "text-center",
+    // },
     {
       field: "firstname",
       headerName: "First name",
@@ -276,9 +264,57 @@ function AllLeads() {
       cellClassName: "text-center",
     },
     {
+      field: "Sms",
+      headerName: "SMS",
+      width: 80,
+      headerClassName: "bg-blue-500 text-white text-lg",
+      cellClassName: "text-center",
+      renderCell: (params) => (
+        <Button variant="contained" color="primary" onClick={handleOpen}>
+          <BsChatText className="h-5 w-5" />
+        </Button>
+      ),
+    },
+    {
+      field: "Call",
+      headerName: "Call",
+      width: 80,
+      headerClassName: "bg-blue-500 text-white text-lg",
+      cellClassName: "text-center",
+      renderCell: (params) => (
+        <Button variant="contained" color="primary" onClick={HandleRingCentral}>
+          <HiOutlinePhoneMissedCall className="h-5 w-5" />
+        </Button>
+      ),
+    },
+    {
+      field: "Email",
+      headerName: "Email",
+      width: 80,
+      headerClassName: "bg-blue-500 text-white text-lg",
+      cellClassName: "text-center",
+      renderCell: (params) => (
+        <Button variant="contained" color="primary" onClick={handleEmailOpen}>
+          <MdOutlineEmail className="h-5 w-5" />
+        </Button>
+      ),
+    },
+    {
+      field: "Task",
+      headerName: "Task",
+      width: 80,
+      headerClassName: "bg-blue-500 text-white text-lg",
+      cellClassName: "text-center",
+      renderCell: (params) => (
+        <Button variant="contained" color="primary">
+          <BiTask className="h-5 w-5" />
+        </Button>
+      ),
+    },
+    {
       field: "del",
       headerName: "Delete",
-      width: 90,
+      width: 80,
       headerClassName: "bg-blue-500 text-white text-lg",
       cellClassName: "text-center",
       renderCell: (params) => (
@@ -289,14 +325,14 @@ function AllLeads() {
             OpenDelete(params.row.id, params.row.firstname, params.row.lastname)
           }
         >
-          <AiOutlineDelete className="h-6 w-6" />
+          <AiOutlineDelete className="h-5 w-5" />
         </Button>
       ),
     },
     {
       field: "update",
       headerName: "Update",
-      width: 90,
+      width: 80,
       headerClassName: "bg-blue-500 text-white text-lg",
       cellClassName: "text-center",
       renderCell: (params) => (
@@ -311,7 +347,7 @@ function AllLeads() {
             })
           }
         >
-          <AiOutlineEdit className="w-6 h-6" />
+          <AiOutlineEdit className="h-5 w-5" />
         </Button>
       ),
     },
@@ -331,6 +367,7 @@ function AllLeads() {
         })
         .then((res) => {
           console.log(res.data);
+          console.log(res.data.lead);
           const data = res?.data;
           const leads = data?.lead;
           // const leads = res.data.lead;
@@ -342,7 +379,7 @@ function AllLeads() {
                 firstname: element.leads[0].firstname,
                 email: element.leads[0].email,
                 phone: element.leads[0].phone,
-                status: "NewLead",
+                status: element.leads[0].status,
               };
               setArray((oldPosts) => [...oldPosts, dd]);
             });
@@ -397,7 +434,7 @@ function AllLeads() {
               {/* Left: Title */}
               <div className="mb-4 sm:mb-0">
                 <h1 className="text-2xl md:text-3xl text-slate-800 font-bold">
-                  Leads ✨
+                  Leads
                 </h1>
               </div>
 
@@ -428,12 +465,22 @@ function AllLeads() {
                 columns={columns}
                 pageSize={5}
                 rowsPerPageOptions={[5]}
+                rowHeight={40}
+                headerRowHeight={40}
                 checkboxSelection
                 className="curson-pointer"
                 onCellClick={(e) => {
+                  console.log(e);
                   setSelectedEmail(e.row.email);
                   setSelectedText(e.row.phone);
-                  if (e.value === undefined) {
+                  navigator.clipboard.writeText(e.row.phone);
+                  if (e.value === undefined && e.field === "Task") {
+                    Navigate("/assignTask", {
+                      state: {
+                        leadId: e.row.id,
+                      },
+                    });
+                  } else if (e.value === undefined) {
                     null;
                   } else {
                     Navigate("/Leaddetails", {

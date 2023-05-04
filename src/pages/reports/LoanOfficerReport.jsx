@@ -236,6 +236,8 @@ function LoanOfficerReport() {
                   columns={columns}
                   pageSize={5}
                   rowsPerPageOptions={[5]}
+                  rowHeight={40}
+                  headerRowHeight={40}
                   checkboxSelection
                   className="curson-pointer"
                 />

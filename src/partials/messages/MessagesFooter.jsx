@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useContext, useRef } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-hot-toast";
 import audioFile from "../../assets/notification.mp3";
 
 function MessagesFooter({
@@ -53,7 +52,6 @@ function MessagesFooter({
           </svg>
         </button>
         {/* Message input */}
-        {/* <form className="grow flex"> */}
         <div className="grow mr-3">
           <label htmlFor="message-input" className="sr-only">
             Type a message
@@ -70,15 +68,12 @@ function MessagesFooter({
           />
         </div>
         <button
-          // type="submit"
           className="btn bg-indigo-500 hover:bg-indigo-600 text-white whitespace-nowrap"
           onClick={SendMessage}
         >
           Send -&gt;
         </button>
-        {/* </form> */}
       </div>
-      <ToastContainer />
     </div>
   );
 }
