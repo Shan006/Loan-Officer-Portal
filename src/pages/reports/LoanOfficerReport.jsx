@@ -75,6 +75,7 @@ function LoanOfficerReport() {
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
+                Custom: "Reports",
               },
             }
           )

@@ -12,6 +12,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 const TasksList = () => {
   const [data, setData] = useState([]);
+  const [secondData, setSecondData] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [Itemdata, setItemData] = useState({});
@@ -46,8 +47,8 @@ const TasksList = () => {
       headerClassName: "bg-blue-500 text-white text-lg",
     },
     {
-      field: "assignto",
-      headerName: "Assign To",
+      field: "assignTo",
+      headerName: "Assign By",
       width: 150,
       headerClassName: "bg-blue-500 text-white text-lg",
     },
@@ -104,6 +105,40 @@ const TasksList = () => {
     },
   ];
 
+  const SecondColumns = [
+    // { field: "id", headerName: "ID", width: 200 },
+    {
+      field: "title",
+      headerName: "Title",
+      width: 150,
+      headerClassName: "bg-blue-500 text-white text-lg",
+    },
+    {
+      field: "description",
+      headerName: "Description",
+      width: 150,
+      headerClassName: "bg-blue-500 text-white text-lg",
+    },
+    {
+      field: "deadline",
+      headerName: "Deadline",
+      width: 150,
+      headerClassName: "bg-blue-500 text-white text-lg",
+    },
+    {
+      field: "assignTo",
+      headerName: "Assign To",
+      width: 150,
+      headerClassName: "bg-blue-500 text-white text-lg",
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      width: 100,
+      headerClassName: "bg-blue-500 text-white text-lg",
+    },
+  ];
+
   const getData = async () => {
     try {
       const result = await axios.get(
@@ -111,12 +146,13 @@ const TasksList = () => {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Custom: "Task Management",
           },
         }
       );
       console.log("taskssss", result.data);
 
-      const taskDatum = result.data.tasks;
+      const taskDatum = result.data.assignedToThisUser;
       taskDatum &&
         taskDatum.forEach((element, index) => {
           const dd = {
@@ -124,10 +160,27 @@ const TasksList = () => {
             title: element.title,
             description: element.description,
             deadline: moment(element.deadline).format("MM.DD.YYYY"),
-            assignto: element.assigned_to.name,
+            assignTo: element.assigned_by.name,
             status: element.status === "pending" ? "Pending" : element.status,
           };
           setData((oldData) => [...oldData, dd]);
+        });
+
+      const task = result.data.assignedByThisUser;
+      task &&
+        task.forEach((element, index) => {
+          const ee = {
+            id: element._id,
+            title: element.title,
+            description: element.description,
+            deadline: moment(element.deadline).format("MM.DD.YYYY"),
+            assignTo:
+              element.assigned_to_ref === "CompanyUsers"
+                ? element.assigned_to.name
+                : element.assigned_to.firstname,
+            status: element.status === "pending" ? "Pending" : element.status,
+          };
+          setSecondData((oldData) => [...oldData, ee]);
         });
     } catch (error) {
       console.log("error:", error);
@@ -142,6 +195,7 @@ const TasksList = () => {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Custom: "Task Management",
           },
         }
       );
@@ -184,6 +238,9 @@ const TasksList = () => {
               </div>
 
               {/* Table */}
+              <b>
+                <h1 className="my-7">Task Assigned To Me</h1>
+              </b>
               <div style={{ height: 430, width: "100%" }}>
                 <DataGrid
                   rows={data}
@@ -202,6 +259,25 @@ const TasksList = () => {
                     //   },
                     // });
                   }}
+                />
+              </div>
+
+              <b>
+                <h1 className="my-7">Task Assigned By Me</h1>
+              </b>
+
+              {/* Assigned To */}
+
+              <div style={{ height: 430, width: "100%" }}>
+                <DataGrid
+                  rows={secondData}
+                  columns={SecondColumns}
+                  pageSize={5}
+                  rowsPerPageOptions={[5]}
+                  rowHeight={40}
+                  headerRowHeight={40}
+                  checkboxSelection
+                  className="curson-pointer"
                 />
               </div>
             </div>

@@ -84,6 +84,7 @@ const UpdateTask = () => {
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
+              Custom: "Task Management",
             },
           }
         );

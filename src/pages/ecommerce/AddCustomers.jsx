@@ -148,6 +148,7 @@ const AddCustomers = () => {
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
+              Custom: "Leads",
             },
           }
         )

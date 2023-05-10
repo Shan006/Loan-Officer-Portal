@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { MdOutlineLeaderboard } from "react-icons/md";
 import SidebarLinkGroup from "./SidebarLinkGroup";
@@ -14,6 +14,7 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Button from "@mui/material/Button";
 import { toast } from "react-hot-toast";
+import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 
 function Sidebar({ sidebarOpen, setSidebarOpen }) {
@@ -32,9 +33,55 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
   };
 
   const location = useLocation();
+  const { userData } = useContext(AuthContext);
   const [emailOpen, setEmailOpen] = useState(false);
   const [smsOpen, setSmsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [menuItems, setMenuItems] = useState([
+    {
+      label: "Leads",
+      attr: [
+        { item: "Add Lead", to: "/addCustomer" },
+        { item: "Lead List", to: "/leadDataTable" },
+      ],
+    },
+    { label: "Communication", attr: [{ item: "Chat", to: "/messages" }] },
+    {
+      label: "Task Management",
+      attr: [
+        { item: "Add Task", to: "/assignTask" },
+        { item: "Tasks", to: "/task/alltasksDataTable" },
+      ],
+    },
+    {
+      label: "Reports",
+      attr: [
+        { item: "Lead Report", to: "/reports/allreports" },
+        { item: "Loan Officer Report", to: "/reports/loanOfficer" },
+      ],
+    },
+    {
+      label: "Contact Management",
+      attr: [
+        { item: "Create Contact", to: "/contacts/contact" },
+        { item: "Contact List", to: "/contacts/contactList" },
+      ],
+    },
+  ]);
+
+  useEffect(() => {
+    if (userData !== undefined) {
+      // const array = ["Task Managment", "Leads"];
+      console.log("This Person's Permissions", userData.permissions);
+      const filteredArray = menuItems.filter((item) =>
+        userData.permissions.includes(item.label)
+      );
+      console.log("Permissions", filteredArray);
+      setMenuItems(filteredArray);
+    } else {
+      null;
+    }
+  }, [userData]);
 
   const { pathname } = location;
   const handleEmailOpen = () => {
@@ -321,43 +368,6 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
               </button>
               {/* Logo */}
               <NavLink end to="/" className="block">
-                {/* <svg width="32" height="32" viewBox="0 0 32 32">
-              <defs>
-                <linearGradient
-                  x1="28.538%"
-                  y1="20.229%"
-                  x2="100%"
-                  y2="108.156%"
-                  id="logo-a"
-                >
-                  <stop stopColor="#A5B4FC" stopOpacity="0" offset="0%" />
-                  <stop stopColor="#A5B4FC" offset="100%" />
-                </linearGradient>
-                <linearGradient
-                  x1="88.638%"
-                  y1="29.267%"
-                  x2="22.42%"
-                  y2="100%"
-                  id="logo-b"
-                >
-                  <stop stopColor="#38BDF8" stopOpacity="0" offset="0%" />
-                  <stop stopColor="#38BDF8" offset="100%" />
-                </linearGradient>
-              </defs>
-              <rect fill="#6366F1" width="32" height="32" rx="16" />
-              <path
-                d="M18.277.16C26.035 1.267 32 7.938 32 16c0 8.837-7.163 16-16 16a15.937 15.937 0 01-10.426-3.863L18.277.161z"
-                fill="#4F46E5"
-              />
-              <path
-                d="M7.404 2.503l18.339 26.19A15.93 15.93 0 0116 32C7.163 32 0 24.837 0 16 0 10.327 2.952 5.344 7.404 2.503z"
-                fill="url(#logo-a)"
-              />
-              <path
-                d="M2.223 24.14L29.777 7.86A15.926 15.926 0 0132 16c0 8.837-7.163 16-16 16-5.864 0-10.991-3.154-13.777-7.86z"
-                fill="url(#logo-b)"
-              />
-            </svg> */}
                 <img
                   src={SophyLogoremovebgpreview}
                   alt="Sophy"
@@ -470,505 +480,125 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                   </span>
                                 </NavLink>
                               </li>
-                              {/* <li className="mb-1 last:mb-0">
-                            <NavLink
-                              end
-                              to="/dashboard/analytics"
-                              className={({ isActive }) =>
-                                "block text-slate-400 hover:text-slate-200 transition duration-150 truncate " +
-                                (isActive ? "!text-indigo-500" : "")
-                              }
-                            >
-                              <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                Analytics
-                              </span>
-                            </NavLink>
-                          </li>
-                          <li className="mb-1 last:mb-0">
-                            <NavLink
-                              end
-                              to="/dashboard/fintech"
-                              className={({ isActive }) =>
-                                "block text-slate-400 hover:text-slate-200 transition duration-150 truncate " +
-                                (isActive ? "!text-indigo-500" : "")
-                              }
-                            >
-                              <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                Fintech
-                              </span>
-                            </NavLink>
-                          </li> */}
                             </ul>
                           </div>
                         </React.Fragment>
                       );
                     }}
                   </SidebarLinkGroup>
-
-                  {/* User Managment */}
-                  {/* <SidebarLinkGroup
-                    activecondition={pathname.includes("leads")}
-                  >
-                    {(handleClick, open) => {
-                      return (
-                        <React.Fragment>
-                          <a
-                            href="#0"
-                            className={`block text-slate-200 hover:text-white truncate transition duration-150 ${
-                              pathname.includes("leads") &&
-                              "hover:text-slate-200"
-                            }`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              sidebarExpanded
-                                ? handleClick()
-                                : setSidebarExpanded(true);
-                            }}
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center">
-                                <SiGoogletagmanager className="h-6 w-6" />
-                                <span className="text-sm font-medium ml-2 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                  User Managment
-                                </span>
-                              </div>
-                              {/* Icon */}
-                  {/* <div className="flex shrink-0 ml-2">
-                                <svg
-                                  className={`w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 ${
-                                    open && "rotate-180"
+                  {menuItems.map((menu) => {
+                    return (
+                      <>
+                        <SidebarLinkGroup
+                          activecondition={
+                            pathname === "/" || pathname.includes("dashboard")
+                          }
+                        >
+                          {(handleClick, open) => {
+                            return (
+                              <React.Fragment>
+                                <a
+                                  href="#0"
+                                  className={`block text-slate-200 hover:text-white truncate transition duration-150 ${
+                                    (pathname === "/" ||
+                                      pathname.includes("dashboard")) &&
+                                    "hover:text-slate-200"
                                   }`}
-                                  viewBox="0 0 12 12"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    sidebarExpanded
+                                      ? handleClick()
+                                      : setSidebarExpanded(true);
+                                  }}
                                 >
-                                  <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                                </svg>
-                              </div>
-                            </div>
-                          </a> */}
-                  {/* <div className="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                            <ul className={`pl-9 mt-1 ${!open && "hidden"}`}>
-                              <li className="mb-1 last:mb-0">
-                                <NavLink
-                                  end
-                                  to="/user/addUser"
-                                  className={({ isActive }) =>
-                                    "block text-slate-400 hover:text-slate-200 transition duration-150 truncate"
-                                  }
-                                >
-                                  <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                    Add User
-                                  </span>
-                                </NavLink> */}
-                  {/* </li> */}
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center">
+                                      <svg
+                                        className="shrink-0 h-6 w-6"
+                                        viewBox="0 0 24 24"
+                                      >
+                                        <path
+                                          className={`fill-current text-slate-400 ${
+                                            (pathname === "/" ||
+                                              pathname.includes("dashboard")) &&
+                                            "!text-indigo-500"
+                                          }`}
+                                          d="M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0z"
+                                        />
+                                        <path
+                                          className={`fill-current text-slate-600 ${
+                                            (pathname === "/" ||
+                                              pathname.includes("dashboard")) &&
+                                            "text-indigo-600"
+                                          }`}
+                                          d="M12 3c-4.963 0-9 4.037-9 9s4.037 9 9 9 9-4.037 9-9-4.037-9-9-9z"
+                                        />
+                                        <path
+                                          className={`fill-current text-slate- ${
+                                            (pathname === "/" ||
+                                              pathname.includes("dashboard")) &&
+                                            "text-indigo-200"
+                                          }`}
+                                          d="M12 15c-1.654 0-3-1.346-3-3 0-.462.113-.894.3-1.285L6 6l4.714 3.301A2.973 2.973 0 0112 9c1.654 0 3 1.346 3 3s-1.346 3-3 3z"
+                                        />
+                                      </svg>
+                                      <span className="text-sm font-medium ml-3  lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                        {menu.label}
+                                      </span>
+                                    </div>
 
-                  {/* <li className="mb-1 last:mb-0">
-                                <NavLink
-                                  end
-                                  to="/user/allUsers"
-                                  className={({ isActive }) =>
-                                    "block text-slate-400 hover:text-slate-200 transition duration-150 truncate "
-                                  }
-                                >
-                                  <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                    All User
-                                  </span>
-                                </NavLink>
-                              </li> */}
-                  {/* <li className="mb-1 last:mb-0">
-                                <NavLink
-                                  end
-                                  to="/user/alluser"
-                                  className={({ isActive }) =>
-                                    "block text-slate-400 hover:text-slate-200 transition duration-150 truncate "
-                                  }
-                                >
-                                  <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                    Users
-                                  </span>
-                                </NavLink>
-                              </li>
-                              {/* portal  */}
-                  {/* </ul>
-                          </div>
-                        </React.Fragment>
-                      );
-                    }}
-                  </SidebarLinkGroup> */}
-
-                  {/* Leads */}
-                  <SidebarLinkGroup
-                    activecondition={pathname.includes("leads")}
-                  >
-                    {(handleClick, open) => {
-                      return (
-                        <React.Fragment>
-                          <a
-                            href="#0"
-                            className={`block text-slate-200 hover:text-white truncate transition duration-150 ${
-                              pathname.includes("leads") &&
-                              "hover:text-slate-200"
-                            }`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              sidebarExpanded
-                                ? handleClick()
-                                : setSidebarExpanded(true);
-                            }}
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center">
-                                {/* leads icon */}
-                                {/* <svg className="shrink-0 h-6 w-6" viewBox="0 0 24 24">
-                              <path
-                                className={`fill-current text-slate-400 ${
-                                  ( pathname.includes('leads')) && '!text-indigo-500'
-                                }`}
-                                d="M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0z"
-                              />
-                              <path
-                                className={`fill-current text-slate-600 ${( pathname.includes('leads')) && 'text-indigo-600'}`}
-                                d="M12 3c-4.963 0-9 4.037-9 9s4.037 9 9 9 9-4.037 9-9-4.037-9-9-9z"
-                              />
-                              <path
-                                className={`fill-current text-slate-400 ${( pathname.includes('leads')) && 'text-indigo-200'}`}
-                                d="M12 15c-1.654 0-3-1.346-3-3 0-.462.113-.894.3-1.285L6 6l4.714 3.301A2.973 2.973 0 0112 9c1.654 0 3 1.346 3 3s-1.346 3-3 3z"
-                              />
-                            </svg> */}
-                                <MdOutlineLeaderboard className="h-8 w-7" />
-                                <span className="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                  Leads
-                                </span>
-                              </div>
-                              {/* Icon */}
-                              <div className="flex shrink-0 ml-2">
-                                <svg
-                                  className={`w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 ${
-                                    open && "rotate-180"
-                                  }`}
-                                  viewBox="0 0 12 12"
-                                >
-                                  <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                                </svg>
-                              </div>
-                            </div>
-                          </a>
-                          <div className="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                            <ul className={`pl-9 mt-1 ${!open && "hidden"}`}>
-                              <li className="mb-1 last:mb-0">
-                                <NavLink
-                                  end
-                                  to="/addCustomer"
-                                  className={({ isActive }) =>
-                                    "block text-slate-400 hover:text-slate-200 transition duration-150 truncate"
-                                  }
-                                >
-                                  <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                    Add Lead
-                                  </span>
-                                </NavLink>
-                              </li>
-                              {/* <li className="mb-1 last:mb-0">
-                            <NavLink
-                              end
-                              to=""
-                              className={({ isActive }) =>
-                                'block text-slate-400 hover:text-slate-200 transition duration-150 truncate ' + (isActive ? '!text-indigo-500' : '')
-                              }
-                            >
-                              <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                Edit Lead
-                              </span>
-                            </NavLink>
-                          </li> */}
-                              {/* <li className="mb-1 last:mb-0">
-                                <NavLink
-                                  end
-                                  to="/customers"
-                                  className={({ isActive }) =>
-                                    "block text-slate-400 hover:text-slate-200 transition duration-150 truncate "
-                                  }
-                                >
-                                  <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                    Lead List
-                                  </span>
-                                </NavLink>
-                              </li> */}
-                              {/* data table */}
-                              <li className="mb-1 last:mb-0">
-                                <NavLink
-                                  end
-                                  to="/leadDataTable"
-                                  className={({ isActive }) =>
-                                    "block text-slate-400 hover:text-slate-200 transition duration-150 truncate "
-                                  }
-                                >
-                                  <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                    Leads List
-                                  </span>
-                                </NavLink>
-                              </li>
-                              {/* portal  */}
-                              {/* <li className="mb-1 last:mb-0">
-                            <NavLink
-                              end
-                              to="/ecommerce/customers/portal"
-                              className={({ isActive }) =>
-                                "block text-slate-400 hover:text-slate-200 transition duration-150 truncate "
-                              }
-                            >
-                              <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                Portal
-                              </span>
-                            </NavLink>
-                          </li> */}
-                            </ul>
-                          </div>
-                        </React.Fragment>
-                      );
-                    }}
-                  </SidebarLinkGroup>
-                  {/* Communication */}
-                  <SidebarLinkGroup
-                    activecondition={pathname.includes("leads")}
-                  >
-                    {(handleClick, open) => {
-                      return (
-                        <React.Fragment>
-                          <a
-                            href="#0"
-                            className={`block text-slate-200 hover:text-white truncate transition duration-150 ${
-                              pathname.includes("leads") &&
-                              "hover:text-slate-200"
-                            }`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              sidebarExpanded
-                                ? handleClick()
-                                : setSidebarExpanded(true);
-                            }}
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center">
-                                <GiSatelliteCommunication className="h-8 w-7" />
-                                <span className="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                  Communication
-                                </span>
-                              </div>
-                              {/* Icon */}
-                              <div className="flex shrink-0 ml-2">
-                                <svg
-                                  className={`w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 ${
-                                    open && "rotate-180"
-                                  }`}
-                                  viewBox="0 0 12 12"
-                                >
-                                  <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                                </svg>
-                              </div>
-                            </div>
-                          </a>
-                          <div className="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                            <ul className={`pl-9 mt-1 ${!open && "hidden"}`}>
-                              <li className="mb-1 last:mb-0">
-                                <NavLink
-                                  end
-                                  to="/messages"
-                                  className={({ isActive }) =>
-                                    "block text-slate-400 hover:text-slate-200 transition duration-150 truncate "
-                                  }
-                                >
-                                  <span
-                                    className="text-slate-400 cursor-pointer hover:text-slate-200 text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                                    // onClick={handleEmailOpen}
+                                    {/* Icon */}
+                                    <div className="flex shrink-0 ml-2">
+                                      <svg
+                                        className={`w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 ${
+                                          open && "rotate-180"
+                                        }`}
+                                        viewBox="0 0 12 12"
+                                      >
+                                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                                      </svg>
+                                    </div>
+                                  </div>
+                                </a>
+                                <div className="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                                  <ul
+                                    className={`pl-9 mt-1 ${!open && "hidden"}`}
                                   >
-                                    Chat
-                                  </span>
-                                </NavLink>
-                              </li>
-                              {/* <li className="mb-1 last:mb-0">
-                                <span
-                                  className="text-slate-400 cursor-pointer hover:text-slate-200 text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                                  onClick={handleEmailOpen}
-                                >
-                                  Email
-                                </span>
-                              </li> */}
-                              {/* <li className="mb-1 last:mb-0">
-                                <span
-                                  className="text-slate-400 cursor-pointer hover:text-slate-200 text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                                  onClick={handleSMSOpen}
-                                >
-                                  SMS
-                                </span>
-                              </li> */}
-                              {/* group chat */}
-                              {/* <li className="mb-1 last:mb-0">
-                                <NavLink
-                                  end
-                                  to="/chat/groupchat"
-                                  className={({ isActive }) =>
-                                    "block text-slate-400 hover:text-slate-200 transition duration-150 truncate"
-                                  }
-                                >
-                                  <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                    Create Rooms
-                                  </span>
-                                </NavLink>
-                              </li> */}
-                              {/* <li className="mb-1 last:mb-0">
-                                <NavLink
-                                  end
-                                  to="/chat/groups"
-                                  className={({ isActive }) =>
-                                    "block text-slate-400 hover:text-slate-200 transition duration-150 truncate"
-                                  }
-                                >
-                                  <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                    Chat Groups
-                                  </span>
-                                </NavLink>
-                              </li> */}
-
-                              {/* <li className="mb-1 last:mb-0">
-                                <NavLink
-                                  end
-                                  to="/chat/groupsDataTable"
-                                  className={({ isActive }) =>
-                                    "block text-slate-400 hover:text-slate-200 transition duration-150 truncate"
-                                  }
-                                >
-                                  <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                    Rooms
-                                  </span>
-                                </NavLink>
-                              </li> */}
-                              {/* <li className="mb-1 last:mb-0">
-                                <NavLink
-                                  end
-                                  to="/chat/conversations"
-                                  className={({ isActive }) =>
-                                    "block text-slate-400 hover:text-slate-200 transition duration-150 truncate"
-                                  }
-                                >
-                                  <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                    All Conversations
-                                  </span>
-                                </NavLink>
-                              </li> */}
-
-                              {/*  */}
-                            </ul>
-                          </div>
-                        </React.Fragment>
-                      );
-                    }}
-                  </SidebarLinkGroup>
-
-                  {/* Marketing */}
-
-                  {/* <SidebarLinkGroup
-                    activecondition={pathname.includes("leads")}
-                  >
-                    {(handleClick, open) => {
-                      return (
-                        <React.Fragment>
-                          <a
-                            href="#0"
-                            className={`block text-slate-200 hover:text-white truncate transition duration-150 ${
-                              pathname.includes("leads") &&
-                              "hover:text-slate-200"
-                            }`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              sidebarExpanded
-                                ? handleClick()
-                                : setSidebarExpanded(true);
-                            }}
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center">
-                                {/* leads icon */}
-
-                  {/* <SiMarketo className="h-8 w-7" />
-                                <span className="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                  Marketing
-                                </span>
-                              </div> */}
-                  {/* Icon */}
-                  {/* <div className="flex shrink-0 ml-2">
-                                <svg
-                                  className={`w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 ${
-                                    open && "rotate-180"
-                                  }`}
-                                  viewBox="0 0 12 12"
-                                >
-                                  <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                                </svg>
-                              </div>
-                            </div>
-                          </a>
-                          <div className="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                            <ul className={`pl-9 mt-1 ${!open && "hidden"}`}>
-                              <li className="mb-1 last:mb-0">
-                                <NavLink
-                                  end
-                                  to=""
-                                  className={({ isActive }) =>
-                                    "block text-slate-400 hover:text-slate-200 transition duration-150 truncate"
-                                  }
-                                >
-                                  <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                    Drip Campaigns
-                                  </span>
-                                </NavLink>
-                              </li>
-                            </ul>
-                          </div>
-                        </React.Fragment>
-                      );
-                    }}
-                  </SidebarLinkGroup> */}
-
-                  {/* Calendar */}
-
-                  {/* <SidebarLinkGroup
-                    activecondition={pathname.includes("leads")}
-                  >
-                    {(handleClick, open) => {
-                      return (
-                        <React.Fragment>
-                          <a
-                            href="#0"
-                            className={`block text-slate-200 hover:text-white truncate transition duration-150 ${
-                              pathname.includes("leads") &&
-                              "hover:text-slate-200"
-                            }`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              sidebarExpanded
-                                ? handleClick()
-                                : setSidebarExpanded(true);
-                            }}
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center">
-                                <SlCalender className="h-8 w-7" />
-                                <span className="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                  Calendar
-                                </span>
-                              </div>
-                            </div>
-                          </a>
-                          <div className="lg:hidden lg:sidebar-expanded:block 2xl:block"></div>
-                        </React.Fragment>
-                      );
-                    }}
-                  </SidebarLinkGroup> */}
-
-                  {/* Task Managment */}
-
+                                    {menu.attr.map((attribute) => {
+                                      return (
+                                        <>
+                                          <li className="mb-1 last:mb-0">
+                                            <NavLink
+                                              end
+                                              to={attribute.to}
+                                              className={({ isActive }) =>
+                                                "block text-slate-400 hover:text-slate-200 transition duration-150 truncate " +
+                                                (isActive
+                                                  ? "!text-indigo-500"
+                                                  : "")
+                                              }
+                                            >
+                                              <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                                {attribute.item}
+                                              </span>
+                                            </NavLink>
+                                          </li>
+                                        </>
+                                      );
+                                    })}
+                                  </ul>
+                                </div>
+                              </React.Fragment>
+                            );
+                          }}
+                        </SidebarLinkGroup>
+                      </>
+                    );
+                  })}
                   <SidebarLinkGroup
-                    activecondition={pathname.includes("leads")}
+                    activecondition={
+                      pathname === "/" || pathname.includes("dashboard")
+                    }
                   >
                     {(handleClick, open) => {
                       return (
@@ -976,7 +606,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                           <a
                             href="#0"
                             className={`block text-slate-200 hover:text-white truncate transition duration-150 ${
-                              pathname.includes("leads") &&
+                              (pathname === "/" ||
+                                pathname.includes("dashboard")) &&
                               "hover:text-slate-200"
                             }`}
                             onClick={(e) => {
@@ -988,204 +619,40 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                           >
                             <div className="flex items-center justify-between">
                               <div className="flex items-center">
-                                <BsListTask className="h-8 w-7" />
-                                <span className="text-sm font-medium ml-2 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                  Task Managment
-                                </span>
-                              </div>
-                              {/* Icon */}
-                              <div className="flex shrink-0 ml-2">
                                 <svg
-                                  className={`w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 ${
-                                    open && "rotate-180"
-                                  }`}
-                                  viewBox="0 0 12 12"
+                                  className="shrink-0 h-6 w-6"
+                                  viewBox="0 0 24 24"
                                 >
-                                  <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                                  <path
+                                    className={`fill-current text-slate-400 ${
+                                      (pathname === "/" ||
+                                        pathname.includes("dashboard")) &&
+                                      "!text-indigo-500"
+                                    }`}
+                                    d="M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0z"
+                                  />
+                                  <path
+                                    className={`fill-current text-slate-600 ${
+                                      (pathname === "/" ||
+                                        pathname.includes("dashboard")) &&
+                                      "text-indigo-600"
+                                    }`}
+                                    d="M12 3c-4.963 0-9 4.037-9 9s4.037 9 9 9 9-4.037 9-9-4.037-9-9-9z"
+                                  />
+                                  <path
+                                    className={`fill-current text-slate- ${
+                                      (pathname === "/" ||
+                                        pathname.includes("dashboard")) &&
+                                      "text-indigo-200"
+                                    }`}
+                                    d="M12 15c-1.654 0-3-1.346-3-3 0-.462.113-.894.3-1.285L6 6l4.714 3.301A2.973 2.973 0 0112 9c1.654 0 3 1.346 3 3s-1.346 3-3 3z"
+                                  />
                                 </svg>
-                              </div>
-                            </div>
-                          </a>
-                          <div className="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                            <ul className={`pl-9 mt-1 ${!open && "hidden"}`}>
-                              <li className="mb-1 last:mb-0">
-                                <NavLink
-                                  end
-                                  to="/assignTask"
-                                  className={({ isActive }) =>
-                                    "block text-slate-400 hover:text-slate-200 transition duration-150 truncate"
-                                  }
-                                >
-                                  <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                    Add Task
-                                  </span>
-                                </NavLink>
-                              </li>
-
-                              {/* <li className="mb-1 last:mb-0">
-                                <NavLink
-                                  end
-                                  to="/task/alltasks"
-                                  className={({ isActive }) =>
-                                    "block text-slate-400 hover:text-slate-200 transition duration-150 truncate "
-                                  }
-                                >
-                                  <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                    All Tasks
-                                  </span>
-                                </NavLink>
-                              </li> */}
-                              <li className="mb-1 last:mb-0">
-                                <NavLink
-                                  end
-                                  to="/task/alltasksDataTable"
-                                  className={({ isActive }) =>
-                                    "block text-slate-400 hover:text-slate-200 transition duration-150 truncate "
-                                  }
-                                >
-                                  <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                    Tasks
-                                  </span>
-                                </NavLink>
-                              </li>
-                              {/* portal  */}
-                            </ul>
-                          </div>
-                        </React.Fragment>
-                      );
-                    }}
-                  </SidebarLinkGroup>
-
-                  {/* Reports */}
-
-                  <SidebarLinkGroup
-                    activecondition={pathname.includes("leads")}
-                  >
-                    {(handleClick, open) => {
-                      return (
-                        <React.Fragment>
-                          <a
-                            href="#0"
-                            className={`block text-slate-200 hover:text-white truncate transition duration-150 ${
-                              pathname.includes("leads") &&
-                              "hover:text-slate-200"
-                            }`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              sidebarExpanded
-                                ? handleClick()
-                                : setSidebarExpanded(true);
-                            }}
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center">
-                                <TbReport className="h-8 w-7" />
-                                <span className="text-sm font-medium ml-2 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                  Reports
-                                </span>
-                              </div>
-                              {/* Icon */}
-                              <div className="flex shrink-0 ml-2">
-                                <svg
-                                  className={`w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 ${
-                                    open && "rotate-180"
-                                  }`}
-                                  viewBox="0 0 12 12"
-                                >
-                                  <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                                </svg>
-                              </div>
-                            </div>
-                          </a>
-                          <div className="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                            <ul className={`pl-9 mt-1 ${!open && "hidden"}`}>
-                              {/* <span className="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                  <NavLink
-                                    end
-                                    to="/reports/allreports"
-                                    className={({ isActive }) =>
-                                      "block text-slate-400 hover:text-slate-200 transition duration-150 truncate "
-                                    }
-                                  >
-                                    <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                      Reports
-                                    </span>
-                                  </NavLink>
-                                </span> */}
-
-                              <li className="mb-1 last:mb-0">
-                                <NavLink
-                                  end
-                                  to="/reports/allreports"
-                                  className={({ isActive }) =>
-                                    "block text-slate-400 hover:text-slate-200 transition duration-150 truncate "
-                                  }
-                                >
-                                  <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                    Lead Report
-                                  </span>
-                                </NavLink>
-                              </li>
-                              <li className="mb-1 last:mb-0">
-                                <NavLink
-                                  end
-                                  to="/reports/loanOfficer"
-                                  className={({ isActive }) =>
-                                    "block text-slate-400 hover:text-slate-200 transition duration-150 truncate "
-                                  }
-                                >
-                                  <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                    Loan Officer Report
-                                  </span>
-                                </NavLink>
-                              </li>
-                              {/* <li className="mb-1 last:mb-0">
-                                <NavLink
-                                  end
-                                  to="/chat/conversationsDataTable"
-                                  className={({ isActive }) =>
-                                    "block text-slate-400 hover:text-slate-200 transition duration-150 truncate"
-                                  }
-                                >
-                                  <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                    Communication Report
-                                  </span>
-                                </NavLink>
-                              </li> */}
-                              {/* portal  */}
-                            </ul>
-                          </div>
-                        </React.Fragment>
-                      );
-                    }}
-                  </SidebarLinkGroup>
-                  {/* Settings  */}
-                  <SidebarLinkGroup
-                    activecondition={pathname.includes("leads")}
-                  >
-                    {(handleClick, open) => {
-                      return (
-                        <React.Fragment>
-                          <a
-                            href="#0"
-                            className={`block text-slate-200 hover:text-white truncate transition duration-150 ${
-                              pathname.includes("leads") &&
-                              "hover:text-slate-200"
-                            }`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              sidebarExpanded
-                                ? handleClick()
-                                : setSidebarExpanded(true);
-                            }}
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center">
-                                <AiOutlineSetting className="h-8 w-7" />
-                                <span className="text-sm font-medium ml-2 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                <span className="text-sm font-medium ml-3  lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
                                   Settings
                                 </span>
                               </div>
+
                               {/* Icon */}
                               <div className="flex shrink-0 ml-2">
                                 <svg
@@ -1206,7 +673,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                   end
                                   to="/settings/account"
                                   className={({ isActive }) =>
-                                    "block text-slate-400 hover:text-slate-200 transition duration-150 truncate"
+                                    "block text-slate-400 hover:text-slate-200 transition duration-150 truncate " +
+                                    (isActive ? "!text-indigo-500" : "")
                                   }
                                 >
                                   <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
@@ -1214,116 +682,12 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                   </span>
                                 </NavLink>
                               </li>
-
-                              {/* <li className="mb-1 last:mb-0">
-                                <NavLink
-                                  end
-                                  to="/task/alltasks"
-                                  className={({ isActive }) =>
-                                    "block text-slate-400 hover:text-slate-200 transition duration-150 truncate "
-                                  }
-                                >
-                                  <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                    All Tasks
-                                  </span>
-                                </NavLink>
-                              </li> */}
-                              {/* portal  */}
                             </ul>
                           </div>
                         </React.Fragment>
                       );
                     }}
                   </SidebarLinkGroup>
-
-                  {/* Contact Managment */}
-
-                  <SidebarLinkGroup
-                    activecondition={pathname.includes("leads")}
-                  >
-                    {(handleClick, open) => {
-                      return (
-                        <React.Fragment>
-                          <a
-                            href="#0"
-                            className={`block text-slate-200 hover:text-white truncate transition duration-150 ${
-                              pathname.includes("leads") &&
-                              "hover:text-slate-200"
-                            }`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              sidebarExpanded
-                                ? handleClick()
-                                : setSidebarExpanded(true);
-                            }}
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center">
-                                <AiOutlineSetting className="h-8 w-7" />
-                                <span className="text-sm font-medium ml-2 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                  Contact Managment
-                                </span>
-                              </div>
-                              {/* Icon */}
-                              <div className="flex shrink-0 ml-2">
-                                <svg
-                                  className={`w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 ${
-                                    open && "rotate-180"
-                                  }`}
-                                  viewBox="0 0 12 12"
-                                >
-                                  <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                                </svg>
-                              </div>
-                            </div>
-                          </a>
-                          <div className="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                            <ul className={`pl-9 mt-1 ${!open && "hidden"}`}>
-                              <li className="mb-1 last:mb-0">
-                                <NavLink
-                                  end
-                                  to="/contacts/contact"
-                                  className={({ isActive }) =>
-                                    "block text-slate-400 hover:text-slate-200 transition duration-150 truncate"
-                                  }
-                                >
-                                  <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                    Create Contact
-                                  </span>
-                                </NavLink>
-                              </li>
-
-                              <li className="mb-1 last:mb-0">
-                                <NavLink
-                                  end
-                                  to="/contacts/contactList"
-                                  className={({ isActive }) =>
-                                    "block text-slate-400 hover:text-slate-200 transition duration-150 truncate "
-                                  }
-                                >
-                                  <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                    Contact List
-                                  </span>
-                                </NavLink>
-                              </li>
-                            </ul>
-                          </div>
-                        </React.Fragment>
-                      );
-                    }}
-                  </SidebarLinkGroup>
-
-                  {/* Messages */}
-
-                  {/* Inbox */}
-
-                  {/* Calendar */}
-
-                  {/* Campaigns */}
-
-                  {/* Settings */}
-
-                  {/* Utility */}
                 </ul>
               </div>
               {/* More group */}

@@ -97,6 +97,7 @@ function AllReports() {
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
+                Custom: "Reports",
               },
             }
           )

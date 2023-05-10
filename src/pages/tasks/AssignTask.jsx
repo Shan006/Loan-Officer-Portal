@@ -22,6 +22,7 @@ const AssignTask = () => {
   const [userId, setUserId] = useState("");
   const [deadline, setDeadline] = useState("");
   const [description, setDescription] = useState("");
+  const [schema, setSchema] = useState("CompanyUsers");
   const [isUrgent, setIsUrgent] = useState(false);
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
@@ -52,6 +53,7 @@ const AssignTask = () => {
 
     if (Location.state) {
       setUserId(Location.state.leadId);
+      setSchema("Leads");
     }
 
     if (title != "" && description != "" && deadline != "" && userId != "") {
@@ -77,15 +79,15 @@ const AssignTask = () => {
             description: description,
             deadline: deadlineDate,
             assigned_to: userId,
-            assigned_to_ref: "Leads",
+            assigned_to_ref: schema,
           },
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
+              Custom: "Task Management",
             },
           }
         );
-        // console.log(result.data.message);
         toast.success(result.data.message);
         setTitle("");
         setDeadline("");

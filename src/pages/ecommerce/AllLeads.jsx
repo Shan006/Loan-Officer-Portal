@@ -363,6 +363,7 @@ function AllLeads() {
         .get(`${import.meta.env.VITE_REACT_APP_SERVER_URL}/lead/user_all`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Custom: "Leads",
           },
         })
         .then((res) => {
@@ -406,6 +407,7 @@ function AllLeads() {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Custom: "Leads",
           },
         }
       );

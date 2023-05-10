@@ -99,6 +99,7 @@ const UpdateLead = () => {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("AuthToken")}`,
+            Custom: "Leads",
           },
         }
       );
@@ -119,6 +120,7 @@ const UpdateLead = () => {
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
+              Custom: "Leads",
             },
           }
         )
@@ -354,8 +356,8 @@ const UpdateLead = () => {
             <div className="ml-4 mb-4 mt-4">
               <UpdateMiletryInfo d={militaryObj} ud={setMilitaryObj} />
               <Button onClick={UpdateLeads} variant="contained" className="m-3">
-              Update
-            </Button>
+                Update
+              </Button>
             </div>
           </main>
         </div>

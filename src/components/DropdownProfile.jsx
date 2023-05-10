@@ -82,7 +82,7 @@ function DropdownProfile({ align }) {
         <img
           className="w-8 h-8 rounded-full"
           src={
-            userData
+            userData?.image
               ? `${import.meta.env.VITE_REACT_APP_IMAGE_URL}/${userData.image}`
               : UserAvatar
           }

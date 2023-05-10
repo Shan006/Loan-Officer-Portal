@@ -30,9 +30,12 @@ function AccountPanel() {
         )
         .then((response) => {
           console.log(response.data);
-          setImageURL(
-            `${import.meta.env.VITE_REACT_APP_IMAGE_URL}/${response.data.image}`
-          );
+          response.data.image &&
+            setImageURL(
+              `${import.meta.env.VITE_REACT_APP_IMAGE_URL}/${
+                response.data.image
+              }`
+            );
         })
         .catch((err) => {
           toast.error("Something Went Wrong");
@@ -106,7 +109,8 @@ function AccountPanel() {
             <div className="mr-4">
               <img
                 className="w-20 h-20 rounded-full"
-                src={imageURL !== null ? imageURL : Image}
+                src={imageURL === null ? Image : imageURL}
+                // src={Image}
                 width="80"
                 height="80"
                 alt="Image"

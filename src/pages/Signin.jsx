@@ -22,7 +22,7 @@ function Signin() {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    // console.log(socket);
+
     try {
       axios
         .post(
@@ -36,11 +36,11 @@ function Signin() {
           });
           console.log(res.data);
           localStorage.setItem("token", res.data.token);
-          const dataObj = {
-            room: uuid(),
-            userEmail: data.email,
-          };
-          socket.emit("join_room_login", dataObj);
+          // const dataObj = {
+          //   room: uuid(),
+          //   userEmail: data.email,
+          // };
+          // socket.emit("join_room_login", dataObj);
           toast.success("LoggedIn Successfully");
           Navigate("/");
         })
